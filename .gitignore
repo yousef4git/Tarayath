@@ -1,0 +1,67 @@
+# Xcode
+#
+# gitignore contributors: remember to keep this file platform-agnostic
+# gitignore test: ./tools/test-gitignore-templates.sh 'Xcode'
+
+## User-specific
+*.DS_Store
+*.xcodeproj/project.xcworkspace
+*.xcodeproj/xcuserdata/
+*.xcscmblueprint
+*.xcscheme
+xcuserdata/
+
+## Build generated
+DerivedData/
+build/
+Build/
+
+## Various
+*.moved-aside
+*.swp
+*~.nib/
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+# *.build/
+# Packages/
+# Package.pins
+# Package.resolved
+.swiftpm/
+build/
+
+# CocoaPods
+#
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself, the pros and cons are mentioned at:
+# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
+#
+# Pods/
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+Carthage/Build
+
+# fastlane
+#
+# It is recommended to not commit the screenshots, logs and reports folders.
+# Youvastlane/report.xml
+# fastlane/Preview.html
+# fastlane/screenshots
+# fastlane/test_output
+
+# Code Injection
+#
+# After new code injection, received from Xcode Injection Plugin,
+# you will have a file `injection.log`
+#
+injection.log
