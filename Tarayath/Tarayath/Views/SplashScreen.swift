@@ -19,17 +19,12 @@ struct SplashScreen: View {
                 Spacer()
                 
                 // App Logo
-                VStack(spacing: 24) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color.darkGreen)
-                            .frame(width: 120, height: 120)
-                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-                        
-                        Text("T")
-                            .font(.system(size: 48, weight: .bold, design: .default))
-                            .foregroundColor(.creamWhite)
-                    }
+                Image("AppLogo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 35, style: .continuous))
+                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
                     .scaleEffect(showContent ? 1.0 : 0.8)
                     .animation(.spring(response: 0.8, dampingFraction: 0.6), value: showContent)
                     

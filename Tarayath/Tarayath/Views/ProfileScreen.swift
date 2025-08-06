@@ -217,7 +217,10 @@ struct ProfileScreen: View {
             .buttonStyle(PrimaryButtonStyle())
             .padding(.top, 8)
         }
-        .modifier(AppCardStyle())
+        .padding(20)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
     
     private var financialSummarySection: some View {
@@ -234,7 +237,10 @@ struct ProfileScreen: View {
                 InfoRow(label: t.totalDecisions, value: "\(appState.purchaseDecisions.count)")
             }
         }
-        .modifier(AppCardStyle())
+        .padding(20)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
     
     private var appSettingsSection: some View {
@@ -265,7 +271,10 @@ struct ProfileScreen: View {
                 )
             }
         }
-        .modifier(AppCardStyle())
+        .padding(20)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }
 
@@ -274,17 +283,24 @@ struct InfoRow: View {
     let value: String
     
     var body: some View {
-        HStack {
+        HStack(alignment: .top) {
             Text(label)
                 .font(AppTypography.callout)
                 .foregroundColor(.secondary)
+                .frame(width: 120, alignment: .leading)
+                .lineLimit(2)
+
             Spacer()
+
             Text(value)
                 .font(AppTypography.callout)
                 .foregroundColor(.darkGreen)
                 .fontWeight(.medium)
+                .multilineTextAlignment(.trailing)
+                .lineLimit(2)
+                .minimumScaleFactor(0.9)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
     }
 }
 

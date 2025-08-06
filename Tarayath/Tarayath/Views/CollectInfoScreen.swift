@@ -161,16 +161,12 @@ struct CollectInfoScreen: View {
     private var titleSection: some View {
         VStack(spacing: 24) {
             // App Logo
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.mediumGreen)
-                    .frame(width: 80, height: 80)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                
-                Text("T")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.creamWhite)
-            }
+            Image("AppLogo")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 100, height: 100)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
             
             VStack(spacing: 8) {
                 Text(t.title)
