@@ -101,7 +101,7 @@ struct PurchaseDecisionScreen: View {
             }
         }
         .sheet(isPresented: $showingNewDecisionSheet) {
-            NewPurchaseDecisionView(
+            NewDecisionHelperFlow(
                 userData: userData,
                 savingsPlans: appState.savingsPlans,
                 onSave: { decision in
@@ -921,6 +921,468 @@ struct NewPurchaseDecisionView: View {
         )
         
         onSave(decision)
+    }
+}
+
+// MARK: - New Decision Helper Flow
+
+struct NewDecisionHelperFlow: View {
+    let userData: UserData
+    let savingsPlans: [SavingsPlan]
+    let onSave: (PurchaseDecision) -> Void
+    let onCancel: () -> Void
+    
+    @State private var currentStep = 1
+    @State private var decision = PurchaseDecision(item: "", price: 0)
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                // Progress indicator
+                ProgressView(value: Double(currentStep), total: 4.0)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .mediumGreen))
+                    .padding(.horizontal)
+                
+                Text("Step \(currentStep) of 4")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.bottom)
+                
+                // Step content
+                Group {
+                    switch currentStep {
+                    case 1:
+                        ItemPriceStep(decision: $decision)
+                    case 2:
+                        QuestionnaireStep(decision: $decision)
+                    case 3:
+                        EmojiStep(decision: $decision)
+                    case 4:
+                        ResultStep(decision: $decision, userData: userData, savingsPlans: savingsPlans)
+                    default:
+                        EmptyView()
+                    }
+                }
+                
+                Spacer()
+                
+                // Navigation buttons
+                HStack {
+                    if currentStep > 1 {
+                        Button("Back") {
+                            currentStep -= 1
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                    }
+                    
+                    Spacer()
+                    
+                    if currentStep < 4 {
+                        Button("Next") {
+                            if currentStep == 3 {
+                                // Evaluate decision before showing results
+                                DecisionEngine.evaluate(decision: &decision, userData: userData, savingsPlans: savingsPlans)
+                            }
+                            currentStep += 1
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .disabled(!canProceed)
+                    } else {
+                        Button("Save Decision") {
+                            onSave(decision)
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Decision Helper")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        onCancel()
+                    }
+                }
+            }
+        }
+    }
+    
+    private var canProceed: Bool {
+        switch currentStep {
+        case 1:
+            return !decision.item.isEmpty && decision.price > 0
+        case 2:
+            return !decision.whyReason.isEmpty && !decision.wantedSince.isEmpty && !decision.urgency.isEmpty
+        case 3:
+            return !decision.emojiFeel.isEmpty && !decision.emojiWhen.isEmpty && !decision.emojiHelp.isEmpty
+        default:
+            return true
+        }
+    }
+}
+
+// MARK: - Step Views
+
+struct ItemPriceStep: View {
+    @Binding var decision: PurchaseDecision
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("What do you want to buy?")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.center)
+            
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("🏷️ Item")
+                        .font(.headline)
+                    TextField("e.g., laptop, headphones, jacket", text: $decision.item)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("💵 Price")
+                        .font(.headline)
+                    TextField("0", value: $decision.price, format: .number)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.decimalPad)
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+struct QuestionnaireStep: View {
+    @Binding var decision: PurchaseDecision
+    
+    private let whyOptions = [
+        "For work", "For study", "For a project", 
+        "For fun or entertainment", "For collection or emotional value"
+    ]
+    
+    private let wantedSinceOptions = [
+        "For a long time (months+)", "For a few weeks", "Just recently"
+    ]
+    
+    private let urgencyOptions = [
+        "Very urgent — I need it now", 
+        "Medium — would be helpful soon", 
+        "Not urgent — I can wait"
+    ]
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                Text("Need Analysis")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                // Q1: Why do you want this?
+                QuestionCard(
+                    question: "❓ Why do you want this item?",
+                    options: whyOptions,
+                    selection: $decision.whyReason
+                )
+                
+                // Q2: Do you own something similar?
+                QuestionCard(
+                    question: "❓ Do you already own something similar?",
+                    options: ["Yes — and it's working", "Yes — but it's limited or broken", "No, this is my first of this type"],
+                    selection: Binding(
+                        get: { decision.hasDuplicate ? "Yes — and it's working" : "No, this is my first of this type" },
+                        set: { decision.hasDuplicate = $0.contains("Yes") }
+                    )
+                )
+                
+                // Q3: How long have you wanted this?
+                QuestionCard(
+                    question: "❓ How long have you wanted this?",
+                    options: wantedSinceOptions,
+                    selection: $decision.wantedSince
+                )
+                
+                // Q4: How urgent is this purchase?
+                QuestionCard(
+                    question: "❓ How urgent is this purchase?",
+                    options: urgencyOptions,
+                    selection: $decision.urgency
+                )
+            }
+            .padding()
+        }
+    }
+}
+
+struct QuestionCard: View {
+    let question: String
+    let options: [String]
+    @Binding var selection: String
+    @State private var customAnswer = ""
+    @State private var showCustom = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(question)
+                .font(.headline)
+                .foregroundColor(.darkGreen)
+            
+            VStack(spacing: 8) {
+                ForEach(options, id: \.self) { option in
+                    Button(action: {
+                        selection = option
+                        showCustom = false
+                    }) {
+                        HStack {
+                            Text(option)
+                                .foregroundColor(.darkGreen)
+                            Spacer()
+                            if selection == option {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.mediumGreen)
+                            }
+                        }
+                        .padding()
+                        .background(selection == option ? Color.mediumGreen.opacity(0.1) : Color.white)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(selection == option ? Color.mediumGreen : Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                    }
+                }
+                
+                // Custom answer option
+                Button(action: {
+                    showCustom.toggle()
+                }) {
+                    HStack {
+                        Text("Other (write)")
+                            .foregroundColor(.darkGreen)
+                        Spacer()
+                        Image(systemName: showCustom ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.mediumGreen)
+                    }
+                    .padding()
+                    .background(showCustom ? Color.mediumGreen.opacity(0.1) : Color.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(showCustom ? Color.mediumGreen : Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                
+                if showCustom {
+                    TextField("Enter your answer", text: $customAnswer)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .onChange(of: customAnswer) { _, newValue in
+                            if !newValue.isEmpty {
+                                selection = newValue
+                            }
+                        }
+                }
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+}
+
+struct EmojiStep: View {
+    @Binding var decision: PurchaseDecision
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                Text("DecisionCheck")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                // How do you feel?
+                EmojiQuestionCard(
+                    question: "How do you feel about this purchase?",
+                    options: [
+                        ("🤩", "Really Excited!"),
+                        ("🙂", "Pretty happy"),
+                        ("😐", "It's okay"),
+                        ("🤔", "Unsure...")
+                    ],
+                    selection: $decision.emojiFeel
+                )
+                
+                // When do you need this?
+                EmojiQuestionCard(
+                    question: "When do you need this?",
+                    options: [
+                        ("⚡️", "Right now!"),
+                        ("📅", "This month"),
+                        ("⏳", "Sometime soon"),
+                        ("🌱", "No rush")
+                    ],
+                    selection: $decision.emojiWhen
+                )
+                
+                // How will this help you?
+                EmojiQuestionCard(
+                    question: "How will this help you?",
+                    options: [
+                        ("🧳", "Essential for work/study"),
+                        ("🌟", "Improves my life"),
+                        ("👍", "Nice to have"),
+                        ("💭", "Just want it")
+                    ],
+                    selection: $decision.emojiHelp
+                )
+            }
+            .padding()
+        }
+    }
+}
+
+struct EmojiQuestionCard: View {
+    let question: String
+    let options: [(String, String)] // (emoji, text)
+    @Binding var selection: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(question)
+                .font(.headline)
+                .foregroundColor(.darkGreen)
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 12) {
+                ForEach(options, id: \.0) { emoji, text in
+                    Button(action: {
+                        selection = emoji
+                    }) {
+                        VStack(spacing: 8) {
+                            Text(emoji)
+                                .font(.system(size: 32))
+                            Text(text)
+                                .font(.caption)
+                                .foregroundColor(.darkGreen)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(selection == emoji ? Color.mediumGreen.opacity(0.2) : Color.white)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(selection == emoji ? Color.mediumGreen : Color.gray.opacity(0.3), lineWidth: 2)
+                        )
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+}
+
+struct ResultStep: View {
+    @Binding var decision: PurchaseDecision
+    let userData: UserData
+    let savingsPlans: [SavingsPlan]
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Final verdict
+                VStack(spacing: 12) {
+                    Text(decision.finalVerdict.emoji)
+                        .font(.system(size: 64))
+                    
+                    Text(decision.finalVerdict.displayText)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.darkGreen)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
+                .background(Color.mediumGreen.opacity(0.1))
+                .cornerRadius(16)
+                
+                // Insight cards
+                VStack(spacing: 16) {
+                    Text("Decision Analysis")
+                        .font(.headline)
+                        .foregroundColor(.darkGreen)
+                    
+                    InsightCard(
+                        title: "💰 Wasting Money",
+                        content: decision.insightCards["wastingMoney"] ?? ""
+                    )
+                    
+                    InsightCard(
+                        title: "🔮 Needing Money Later",
+                        content: decision.insightCards["needingMoneyLater"] ?? ""
+                    )
+                    
+                    InsightCard(
+                        title: "🤷‍♂️ Realizing You Didn't Need It",
+                        content: decision.insightCards["realizingDidntNeed"] ?? ""
+                    )
+                    
+                    InsightCard(
+                        title: "😰 Feeling Guilty or Rushed",
+                        content: decision.insightCards["feelingGuiltyRushed"] ?? ""
+                    )
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+struct InsightCard: View {
+    let title: String
+    let content: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.darkGreen)
+            
+            Text(content)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+}
+
+// MARK: - Secondary Button Style
+
+struct SecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .frame(minWidth: 80)
+            .background(Color.white)
+            .foregroundColor(.mediumGreen)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.mediumGreen, lineWidth: 1)
+            )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
 
