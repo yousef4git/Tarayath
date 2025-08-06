@@ -161,7 +161,7 @@ struct CollectInfoScreen: View {
     private var titleSection: some View {
         VStack(spacing: 24) {
             // App Logo
-            Image("logo")
+            Image("Logo")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 100, height: 100)

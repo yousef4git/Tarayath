@@ -39,7 +39,8 @@ struct MainContentView: View {
                 ProfileScreen()
             }
         }
-        .frame(maxWidth: 428)
+        .frame(maxWidth: 428, maxHeight: .infinity, alignment: .top)
+        .ignoresSafeArea(.keyboard)
         .background(Color.appBackground)
         .onAppear {
             appState.loadInitialData()
