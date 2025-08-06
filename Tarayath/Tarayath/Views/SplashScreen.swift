@@ -16,10 +16,10 @@ struct SplashScreen: View {
             .ignoresSafeArea()
             
             VStack(spacing: 40) {
-                Spacer()
                 
                 // App Logo
-                Image("AppLogo")
+                VStack(spacing: 24) {
+                    Image("logo")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 150, height: 150)
