@@ -1368,23 +1368,7 @@ struct InsightCard: View {
     }
 }
 
-// MARK: - Secondary Button Style
-
-struct SecondaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding()
-            .frame(minWidth: 80)
-            .background(Color.white)
-            .foregroundColor(.mediumGreen)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.mediumGreen, lineWidth: 1)
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
+// SecondaryButtonStyle is defined in DesignSystem.swift
 
 #Preview {
     PurchaseDecisionScreen()
