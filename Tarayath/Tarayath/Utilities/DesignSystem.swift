@@ -92,23 +92,36 @@ struct AppTypography {
 struct AppGradients {
     static var primaryGradient: LinearGradient {
         LinearGradient(
-            gradient: Gradient(colors: [
-                Color.primaryBackground,
-                Color.primaryBackground.opacity(0.1)
+            gradient: Gradient(stops: [
+                .init(color: Color.mediumGreen.opacity(0.8), location: 0.0),
+                .init(color: Color.lightBrown.opacity(0.6), location: 0.5),
+                .init(color: Color.creamWhite.opacity(0.9), location: 1.0)
             ]),
-            startPoint: .top,
-            endPoint: .bottom
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    static var collectInfoGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(stops: [
+                .init(color: Color.mediumGreen.opacity(0.8), location: 0.0),
+                .init(color: Color.lightBrown.opacity(0.6), location: 0.4),
+                .init(color: Color.creamWhite.opacity(0.9), location: 1.0)
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
         )
     }
     
     static var cardGradient: LinearGradient {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color.cardBackground,
-                Color.cardBackground.opacity(0.95)
+                Color.creamWhite.opacity(0.8),
+                Color.lightBrown.opacity(0.3)
             ]),
-            startPoint: .top,
-            endPoint: .bottom
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
         )
     }
     
@@ -120,6 +133,25 @@ struct AppGradients {
             ]),
             startPoint: .top,
             endPoint: .bottom
+        )
+    }
+    
+    static var buttonGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [Color.mediumGreen, Color.darkGreen]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+    
+    static var fieldGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color.creamWhite.opacity(0.8),
+                Color.lightBrown.opacity(0.3)
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
         )
     }
 }
