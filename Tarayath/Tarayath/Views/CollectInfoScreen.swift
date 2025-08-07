@@ -5,6 +5,11 @@ struct CollectInfoScreen: View {
     @State private var formData = UserData()
     @State private var formErrors = FormErrors()
     
+    // Add string representations for the numeric fields
+    @State private var monthlyIncomeText = ""
+    @State private var monthlyObligationsText = ""
+    @State private var currentBalanceText = ""
+    
     struct FormErrors {
         var fullName = false
         var monthlyIncome = false
@@ -72,131 +77,158 @@ struct CollectInfoScreen: View {
     
     private var isFormValid: Bool {
         !formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        formData.monthlyIncome > 0 &&
-        formData.currentBalance >= 0
+        !monthlyIncomeText.isEmpty &&
+        Double(monthlyIncomeText) ?? 0 > 0 &&
+        !currentBalanceText.isEmpty &&
+        Double(currentBalanceText) ?? 0 >= 0
     }
-    
+
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background Gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header with Language Toggle
-                    headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
+        ZStack {
+            // Enhanced Gradient Background
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.mediumGreen.opacity(0.8), location: 0.0),
+                    .init(color: Color.lightBrown.opacity(0.6), location: 0.4),
+                    .init(color: Color.creamWhite.opacity(0.9), location: 1.0)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 32) {
+                    // Header Section
+                    headerSection
                     
-                    // Form Content
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            // App Logo and Title
-                            titleSection
-                            
-                            // Form Fields
-                            formSection
-                            
-                            // Submit Button
-                            submitButton
-                            
-                            // Error Message
-                            if !isFormValid && hasErrors {
-                                errorMessage
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 32)
+                    // Form Fields Section
+                    formFieldsSection
+                    
+                    // Submit Button
+                    submitButton
+                    
+                    // Error Message
+                    if !isFormValid && hasErrors {
+                        errorMessage
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 60)
+                .padding(.bottom, 40)
             }
         }
         .environment(\.layoutDirection, formData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
-    private var headerView: some View {
-        HStack {
-            if formData.language.isRTL {
-                languageToggle
-                Spacer()
-            } else {
+    private var headerSection: some View {
+        VStack(spacing: 24) {
+            // Language Toggle - Moved to top right
+            HStack {
                 Spacer()
                 languageToggle
             }
+            
+            // App Logo Section
+            VStack(spacing: 20) {
+                // Logo with enhanced styling
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.darkGreen,
+                                    Color.mediumGreen
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 100, height: 100)
+                        .shadow(color: Color.darkGreen.opacity(0.4), radius: 12, x: 0, y: 6)
+                    
+                    Image("Screenshot 1447-02-12 at 11.03.28 AM")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                }
+                
+                // Title Section with better styling
+                VStack(spacing: 12) {
+                    Text(t.title)
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .multilineTextAlignment(.center)
+                    
+                    Text(t.subtitle)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(Color.darkGreen.opacity(0.8))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
+                }
+            }
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 16)
     }
     
     private var languageToggle: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 0) {
             Button("EN") {
-                formData.language = .english
+                withAnimation(.spring()) {
+                    formData.language = .english
+                }
             }
-            .foregroundColor(formData.language == .english ? .creamWhite : .darkGreen)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(formData.language == .english ? Color.mediumGreen : Color.clear)
-            .cornerRadius(8)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundColor(formData.language == .english ? Color.creamWhite : Color.darkGreen)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                formData.language == .english 
+                    ? Color.darkGreen
+                    : Color.clear
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             
             Button("AR") {
-                formData.language = .arabic
+                withAnimation(.spring()) {
+                    formData.language = .arabic
+                }
             }
-            .foregroundColor(formData.language == .arabic ? .creamWhite : .darkGreen)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(formData.language == .arabic ? Color.mediumGreen : Color.clear)
-            .cornerRadius(8)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundColor(formData.language == .arabic ? Color.creamWhite : Color.darkGreen)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                formData.language == .arabic 
+                    ? Color.darkGreen
+                    : Color.clear
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .padding(4)
-        .background(Color.white.opacity(0.9))
-        .cornerRadius(12)
-        .shadow(color: Color.mediumGreen.opacity(0.2), radius: 2, x: 0, y: 1)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.creamWhite.opacity(0.9))
+                .shadow(color: Color.darkGreen.opacity(0.2), radius: 6, x: 0, y: 3)
+        )
     }
     
-    private var titleSection: some View {
+    private var formFieldsSection: some View {
         VStack(spacing: 24) {
-            // App Logo
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.mediumGreen)
-                    .frame(width: 80, height: 80)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                
-                Text("T")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.creamWhite)
-            }
-            
-            VStack(spacing: 8) {
-                Text(t.title)
-                    .font(AppTypography.largeTitle)
-                    .foregroundColor(.darkGreen)
-                    .multilineTextAlignment(.center)
-                
-                Text(t.subtitle)
-                    .font(AppTypography.callout)
-                    .foregroundColor(.darkGreen.opacity(0.7))
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(.top, 32)
-    }
-    
-    private var formSection: some View {
-        VStack(spacing: 24) {
-            // Full Name
-            FormField(
+            // Full Name Field
+            EnhancedFormField(
                 title: t.fullName,
                 placeholder: t.fullNamePlaceholder,
                 text: $formData.fullName,
                 isRequired: true,
                 hasError: formErrors.fullName,
                 errorMessage: t.required,
+                icon: "person.fill",
+                fieldType: .text,
                 onTextChange: { _ in
                     if formErrors.fullName {
                         formErrors.fullName = false
@@ -204,42 +236,56 @@ struct CollectInfoScreen: View {
                 }
             )
             
-            // Monthly Income
-            FormField(
+            // Monthly Income Field - Updated to use string input
+            EnhancedFormField(
                 title: t.monthlyIncome,
                 placeholder: t.monthlyIncomePlaceholder,
-                value: $formData.monthlyIncome,
+                textValue: $monthlyIncomeText,
                 currency: formData.currency,
                 isRequired: true,
                 hasError: formErrors.monthlyIncome,
                 errorMessage: t.required,
-                onValueChange: { _ in
+                icon: "dollarsign.circle.fill",
+                fieldType: .currency,
+                onTextValueChange: { newValue in
+                    monthlyIncomeText = newValue
+                    formData.monthlyIncome = Double(newValue) ?? 0
                     if formErrors.monthlyIncome {
                         formErrors.monthlyIncome = false
                     }
                 }
             )
             
-            // Monthly Obligations
-            FormField(
+            // Monthly Obligations Field - Updated to use string input
+            EnhancedFormField(
                 title: t.monthlyObligations,
                 subtitle: t.monthlyObligationsOptional,
                 placeholder: t.monthlyObligationsPlaceholder,
-                value: $formData.monthlyObligations,
+                textValue: $monthlyObligationsText,
                 currency: formData.currency,
-                isRequired: false
+                isRequired: false,
+                icon: "list.bullet.circle.fill",
+                fieldType: .currency,
+                onTextValueChange: { newValue in
+                    monthlyObligationsText = newValue
+                    formData.monthlyObligations = Double(newValue) ?? 0
+                }
             )
             
-            // Current Balance
-            FormField(
+            // Current Balance Field - Updated to use string input
+            EnhancedFormField(
                 title: t.currentBalance,
                 placeholder: t.currentBalancePlaceholder,
-                value: $formData.currentBalance,
+                textValue: $currentBalanceText,
                 currency: formData.currency,
                 isRequired: true,
                 hasError: formErrors.currentBalance,
                 errorMessage: t.required,
-                onValueChange: { _ in
+                icon: "creditcard.fill",
+                fieldType: .currency,
+                onTextValueChange: { newValue in
+                    currentBalanceText = newValue
+                    formData.currentBalance = Double(newValue) ?? 0
                     if formErrors.currentBalance {
                         formErrors.currentBalance = false
                     }
@@ -249,44 +295,71 @@ struct CollectInfoScreen: View {
             // Currency Selection
             currencySelection
         }
-        .appCardStyle()
-        .padding(24)
     }
     
     private var currencySelection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(t.currency)
-                .font(AppTypography.callout)
-                .foregroundColor(.darkGreen)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "coloncurrencysign.circle.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(Color.darkGreen)
+                Text(t.currency)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.darkGreen)
+                Spacer()
+            }
             
-            HStack(spacing: 12) {
-                CurrencyButton(
+            HStack(spacing: 16) {
+                EnhancedCurrencyButton(
                     title: "Saudi Riyal",
                     subtitle: "ر.س",
                     isSelected: formData.currency == .SAR
                 ) {
-                    formData.currency = .SAR
+                    withAnimation(.spring()) {
+                        formData.currency = .SAR
+                    }
                 }
                 
-                CurrencyButton(
+                EnhancedCurrencyButton(
                     title: "US Dollar",
                     subtitle: "$",
                     isSelected: formData.currency == .USD
                 ) {
-                    formData.currency = .USD
+                    withAnimation(.spring()) {
+                        formData.currency = .USD
+                    }
                 }
             }
         }
+        .padding(.top, 8)
     }
     
     private var submitButton: some View {
         Button(action: handleSubmit) {
-            Text(t.getStarted)
-                .frame(maxWidth: .infinity)
+            HStack(spacing: 12) {
+                Text(t.getStarted)
+                    .font(.system(size: 18, weight: .bold))
+                Image(systemName: "arrow.right.circle.fill")
+                    .font(.system(size: 20))
+            }
+            .foregroundColor(Color.creamWhite)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 18)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.mediumGreen, Color.darkGreen]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(16)
+            .shadow(color: Color.darkGreen.opacity(0.4), radius: 12, x: 0, y: 6)
         }
-        .buttonStyle(PrimaryButtonStyle())
         .disabled(!isFormValid)
         .opacity(isFormValid ? 1.0 : 0.6)
+        .scaleEffect(isFormValid ? 1.0 : 0.98)
+        .animation(.spring(), value: isFormValid)
+        .padding(.top, 16)
     }
     
     private var hasErrors: Bool {
@@ -294,16 +367,29 @@ struct CollectInfoScreen: View {
     }
     
     private var errorMessage: some View {
-        Text(t.pleaseComplete)
-            .font(AppTypography.caption)
-            .foregroundColor(.red)
-            .multilineTextAlignment(.center)
+        HStack {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.red)
+            Text(t.pleaseComplete)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.red)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.red.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                )
+        )
     }
     
     private func validateForm() -> Bool {
         formErrors.fullName = formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        formErrors.monthlyIncome = formData.monthlyIncome <= 0
-        formErrors.currentBalance = formData.currentBalance < 0
+        formErrors.monthlyIncome = monthlyIncomeText.isEmpty || (Double(monthlyIncomeText) ?? 0) <= 0
+        formErrors.currentBalance = currentBalanceText.isEmpty || (Double(currentBalanceText) ?? 0) < 0
         
         return !hasErrors
     }
@@ -312,96 +398,186 @@ struct CollectInfoScreen: View {
         guard validateForm() else { return }
         
         formData.fullName = formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines)
+        formData.monthlyIncome = Double(monthlyIncomeText) ?? 0
+        formData.monthlyObligations = Double(monthlyObligationsText) ?? 0
+        formData.currentBalance = Double(currentBalanceText) ?? 0
+        
         appState.updateUserData(formData)
         appState.navigateToScreen(.dashboard)
     }
 }
 
-// MARK: - Supporting Views
+// MARK: - Enhanced Form Field Component
 
-struct FormField: View {
+enum FieldType {
+    case text
+    case currency
+}
+
+struct EnhancedFormField: View {
     let title: String
     var subtitle: String? = nil
     let placeholder: String
     var text: Binding<String>?
+    var textValue: Binding<String>?  // New parameter for string-based currency fields
     var value: Binding<Double>?
     var currency: Currency?
     let isRequired: Bool
     var hasError: Bool = false
     var errorMessage: String = ""
+    let icon: String
+    let fieldType: FieldType
     var onTextChange: ((String) -> Void)?
+    var onTextValueChange: ((String) -> Void)?  // New parameter for string-based currency fields
     var onValueChange: ((Double) -> Void)?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
+        VStack(alignment: .leading, spacing: 12) {
+            // Field Title with Icon
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundColor(Color.darkGreen)
+                
                 Text(title)
-                    .font(AppTypography.callout)
-                    .foregroundColor(.darkGreen)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.darkGreen)
                 
                 if isRequired {
                     Text("*")
                         .foregroundColor(.red)
+                        .font(.system(size: 16, weight: .bold))
                 }
                 
                 if let subtitle = subtitle {
                     Text("(\(subtitle))")
-                        .font(AppTypography.caption)
-                        .foregroundColor(.darkGreen.opacity(0.6))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(Color.darkGreen.opacity(0.6))
                 }
                 
                 Spacer()
             }
             
+            // Input Field
             ZStack(alignment: .trailing) {
-                if let textBinding = text {
+                if fieldType == .text, let textBinding = text {
                     TextField(placeholder, text: textBinding)
-                        .textFieldStyle(AppTextFieldStyle(hasError: hasError))
-                        .onChange(of: textBinding.wrappedValue) { newValue in
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(Color.darkGreen)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
+                        .background(fieldBackground)
+                        .overlay(fieldOverlay)
+                        .shadow(
+                            color: Color.mediumGreen.opacity(0.1),
+                            radius: 4,
+                            x: 0,
+                            y: 2
+                        )
+                        .onChange(of: textBinding.wrappedValue) { _, newValue in
                             onTextChange?(newValue)
                         }
-                } else if let valueBinding = value {
-                    TextField(placeholder, value: valueBinding, format: .number)
-                        .textFieldStyle(AppTextFieldStyle(hasError: hasError))
-                        .keyboardType(.decimalPad)
-                        .onChange(of: valueBinding.wrappedValue) { newValue in
-                            onValueChange?(newValue)
-                        }
+                } else if fieldType == .currency {
+                    if let textValueBinding = textValue {
+                        // String-based currency field (for empty default)
+                        TextField(placeholder, text: textValueBinding)
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundColor(Color.darkGreen)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                            .padding(.trailing, currency != nil ? 50 : 20)
+                            .background(fieldBackground)
+                            .overlay(fieldOverlay)
+                            .shadow(
+                                color: Color.mediumGreen.opacity(0.1),
+                                radius: 4,
+                                x: 0,
+                                y: 2
+                            )
+                            .keyboardType(.decimalPad)
+                            .onChange(of: textValueBinding.wrappedValue) { _, newValue in
+                                // Filter input to only allow numbers and decimal point
+                                let filtered = newValue.filter { "0123456789.".contains($0) }
+                                if filtered != newValue {
+                                    textValueBinding.wrappedValue = filtered
+                                }
+                                onTextValueChange?(filtered)
+                            }
+                    } else if let valueBinding = value {
+                        // Original double-based currency field (legacy support)
+                        TextField(placeholder, value: valueBinding, format: .number)
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundColor(Color.darkGreen)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                            .padding(.trailing, currency != nil ? 50 : 20)
+                            .background(fieldBackground)
+                            .overlay(fieldOverlay)
+                            .shadow(
+                                color: Color.mediumGreen.opacity(0.1),
+                                radius: 4,
+                                x: 0,
+                                y: 2
+                            )
+                            .keyboardType(.decimalPad)
+                            .onChange(of: valueBinding.wrappedValue) { _, newValue in
+                                onValueChange?(newValue)
+                            }
+                    }
                 }
                 
-                if let currency = currency {
+                // Currency Symbol
+                if let currency = currency, fieldType == .currency {
                     Text(currency.symbol)
-                        .font(AppTypography.callout)
-                        .foregroundColor(.darkGreen.opacity(0.6))
-                        .padding(.trailing, 16)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Color.darkGreen.opacity(0.7))
+                        .padding(.trailing, 20)
                 }
             }
             
+            // Error Message
             if hasError && !errorMessage.isEmpty {
-                Text(errorMessage)
-                    .font(AppTypography.caption)
-                    .foregroundColor(.red)
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.red)
+                    Text(errorMessage)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.red)
+                }
             }
         }
     }
-}
-
-struct AppTextFieldStyle: TextFieldStyle {
-    let hasError: Bool
     
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding(16)
-            .background(Color.mediumGreen.opacity(0.05))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(hasError ? Color.red : Color.mediumGreen.opacity(0.2), lineWidth: 1)
+    // Computed properties to reduce code duplication
+    private var fieldBackground: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.creamWhite.opacity(0.8),
+                        Color.lightBrown.opacity(0.3)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+    }
+    
+    private var fieldOverlay: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                hasError 
+                    ? Color.red
+                    : Color.mediumGreen.opacity(0.4),
+                lineWidth: hasError ? 2 : 1.5
             )
     }
 }
 
-struct CurrencyButton: View {
+// MARK: - Enhanced Currency Button
+
+struct EnhancedCurrencyButton: View {
     let title: String
     let subtitle: String
     let isSelected: Bool
@@ -409,29 +585,61 @@ struct CurrencyButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
-                Text(title)
-                    .font(AppTypography.callout)
-                    .fontWeight(.medium)
-                    .foregroundColor(.darkGreen)
-                
+            VStack(spacing: 8) {
                 Text(subtitle)
-                    .font(AppTypography.caption)
-                    .foregroundColor(.darkGreen.opacity(0.6))
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(isSelected ? Color.creamWhite : Color.darkGreen)
+                
+                Text(title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(isSelected ? Color.creamWhite.opacity(0.9) : Color.darkGreen.opacity(0.8))
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .padding(16)
-            .background(isSelected ? Color.mediumGreen.opacity(0.1) : Color.clear)
-            .cornerRadius(12)
+            .padding(.vertical, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        isSelected 
+                            ? LinearGradient(
+                                gradient: Gradient(colors: [Color.mediumGreen, Color.darkGreen]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            : LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.creamWhite.opacity(0.7),
+                                    Color.lightBrown.opacity(0.3)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                    )
+            )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.mediumGreen : Color.mediumGreen.opacity(0.2), lineWidth: 2)
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        isSelected 
+                            ? Color.clear
+                            : Color.mediumGreen.opacity(0.4),
+                        lineWidth: 1.5
+                    )
+            )
+            .shadow(
+                color: isSelected 
+                    ? Color.darkGreen.opacity(0.4)
+                    : Color.mediumGreen.opacity(0.1),
+                radius: isSelected ? 8 : 4,
+                x: 0,
+                y: isSelected ? 4 : 2
             )
         }
+        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
 }
 
 #Preview {
     CollectInfoScreen()
         .environmentObject(AppState())
-} 
+}

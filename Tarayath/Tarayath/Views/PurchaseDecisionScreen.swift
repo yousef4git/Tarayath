@@ -11,7 +11,7 @@ struct PurchaseDecisionScreen: View {
     private var texts: [AppLanguage: DecisionTexts] = [
         .english: DecisionTexts(
             title: "Decision Helper",
-            backToDashboard: "Back to Dashboard",
+            backToDashboard: "",
             makeNewDecision: "Get Decision Help",
             recentDecisions: "Recent Decisions",
             noDecisions: "No decisions made yet",
@@ -27,7 +27,7 @@ struct PurchaseDecisionScreen: View {
         ),
         .arabic: DecisionTexts(
             title: "مساعد القرارات",
-            backToDashboard: "العودة للوحة الرئيسية",
+            backToDashboard: "",
             makeNewDecision: "احصل على مساعدة القرار",
             recentDecisions: "القرارات الأخيرة",
             noDecisions: "لم يتم اتخاذ قرارات بعد",
@@ -65,7 +65,6 @@ struct PurchaseDecisionScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -78,7 +77,6 @@ struct PurchaseDecisionScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -99,7 +97,7 @@ struct PurchaseDecisionScreen: View {
                     }
                 }
             }
-        }
+        
         .sheet(isPresented: $showingNewDecisionSheet) {
             NewPurchaseDecisionView(
                 userData: userData,
@@ -132,7 +130,7 @@ struct PurchaseDecisionScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -290,7 +288,7 @@ struct PurchaseDecisionCard: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.green)
                     Text(texts.purchased)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.green)
                         .fontWeight(.medium)
                 }
@@ -300,11 +298,11 @@ struct PurchaseDecisionCard: View {
             if let firstReason = decision.reasoning.values.first, !firstReason.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.reasoning)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                         .fontWeight(.medium)
                     Text(firstReason)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.darkGreen)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -315,7 +313,7 @@ struct PurchaseDecisionCard: View {
             HStack {
                 Spacer()
                 Text(decision.createdAt, style: .date)
-                    .font(AppTypography.caption)
+                    .font(AppTypography.caption1)
                     .foregroundColor(.secondary)
             }
         }
@@ -716,7 +714,7 @@ struct NewPurchaseDecisionView: View {
                     .font(.system(size: 48))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(decision.title)
-                        .font(AppTypography.title)
+                        .font(AppTypography.title3)
                         .foregroundColor(decision.color)
                         .fontWeight(.bold)
                     Text(decision.message)
@@ -749,7 +747,7 @@ struct NewPurchaseDecisionView: View {
                             .foregroundColor(.darkGreen)
                             .fontWeight(.medium)
                         Text(item.description)
-                            .font(AppTypography.caption)
+                            .font(AppTypography.caption1)
                             .foregroundColor(.secondary)
                     }
                     Spacer()
@@ -927,4 +925,4 @@ struct NewPurchaseDecisionView: View {
 #Preview {
     PurchaseDecisionScreen()
         .environmentObject(AppState())
-} 
+}

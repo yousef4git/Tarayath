@@ -11,7 +11,7 @@ struct SavingsPlanScreen: View {
     private var texts: [AppLanguage: SavingsTexts] = [
         .english: SavingsTexts(
             title: "Savings Plans",
-            backToDashboard: "Back to Dashboard",
+            backToDashboard: "",
             createNewPlan: "Create New Plan",
             activePlans: "Active Plans",
             completedPlans: "Completed Plans",
@@ -29,7 +29,7 @@ struct SavingsPlanScreen: View {
         ),
         .arabic: SavingsTexts(
             title: "خطط الادخار",
-            backToDashboard: "العودة للوحة الرئيسية",
+            backToDashboard: "",
             createNewPlan: "إنشاء خطة جديدة",
             activePlans: "الخطط النشطة",
             completedPlans: "الخطط المكتملة",
@@ -79,7 +79,6 @@ struct SavingsPlanScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -92,7 +91,6 @@ struct SavingsPlanScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -121,7 +119,7 @@ struct SavingsPlanScreen: View {
                     }
                 }
             }
-        }
+        
         .sheet(isPresented: $showingNewPlanSheet) {
             NewSavingsPlanView(
                 userData: userData,
@@ -153,7 +151,7 @@ struct SavingsPlanScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -292,7 +290,7 @@ struct SavingsPlanCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(statusText)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(statusColor)
                         .fontWeight(.medium)
                 }
@@ -308,7 +306,7 @@ struct SavingsPlanCard: View {
                         .minimumScaleFactor(0.8)
                     
                     Text("of \(CurrencyFormatter.format(plan.targetAmount, currency: userData.currency))")
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -320,7 +318,7 @@ struct SavingsPlanCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(texts.planProgress)
-                        .font(AppTypography.callout)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     
                     Spacer()
@@ -352,7 +350,7 @@ struct SavingsPlanCard: View {
             HStack(spacing: 40) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.monthlyAmount)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     Text(CurrencyFormatter.format(plan.monthlyAmount, currency: userData.currency))
                         .font(AppTypography.callout)
@@ -364,7 +362,7 @@ struct SavingsPlanCard: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.duration)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     Text("\(plan.duration) \(texts.months)")
                         .font(AppTypography.callout)
@@ -567,4 +565,4 @@ struct NewSavingsPlanView: View {
 #Preview {
     SavingsPlanScreen()
         .environmentObject(AppState())
-} 
+}

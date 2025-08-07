@@ -7,13 +7,9 @@ struct SplashScreen: View {
     
     var body: some View {
         ZStack {
-            // Gradient Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.mediumGreen, Color.white]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // Gradient Background - Updated
+            AppGradients.splashGradient
+                .ignoresSafeArea()
             
             VStack(spacing: 40) {
                 Spacer()
@@ -26,21 +22,24 @@ struct SplashScreen: View {
                             .frame(width: 120, height: 120)
                             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
                         
-                        Text("T")
-                            .font(.system(size: 48, weight: .bold, design: .default))
-                            .foregroundColor(.creamWhite)
+                        Image("Screenshot 1447-02-12 at 11.03.28 AM")
+                            .resizable()
+                            .scaledToFit() 
+                            .frame(width: 80, height: 80)
                     }
                     .scaleEffect(showContent ? 1.0 : 0.8)
-                    .animation(.spring(response: 0.8, dampingFraction: 0.6), value: showContent)
+                    .animation(AppAnimations.spring, value: showContent)
                     
                     // App Name
                     VStack(spacing: 8) {
                         Text("Tarayath")
-                            .font(.system(size: 32, weight: .bold))
+                            .font(AppTypography.largeTitle)
+                            .fontWeight(.bold)
                             .foregroundColor(.darkGreen)
                         
                         Text("تريّث")
-                            .font(.system(size: 24, weight: .semibold))
+                            .font(AppTypography.title2)
+                            .fontWeight(.semibold)
                             .foregroundColor(.darkGreen.opacity(0.8))
                     }
                     .opacity(showContent ? 1.0 : 0.0)
@@ -54,7 +53,7 @@ struct SplashScreen: View {
                             .foregroundColor(.darkGreen.opacity(0.8))
                         
                         Text("مخطط أموالك الشخصي")
-                            .font(AppTypography.caption)
+                            .font(AppTypography.subheadline)
                             .foregroundColor(.darkGreen.opacity(0.6))
                     }
                     .multilineTextAlignment(.center)
@@ -69,7 +68,7 @@ struct SplashScreen: View {
                 Button(action: handleGetStarted) {
                     HStack(spacing: 12) {
                         Text("Get Started")
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
                         
                         Image(systemName: "arrow.right")
                             .font(.system(size: 16, weight: .medium))
@@ -97,7 +96,7 @@ struct SplashScreen: View {
             .padding(.horizontal, 32)
         }
         .onAppear {
-            withAnimation {
+            withAnimation(AppAnimations.gentle) {
                 showContent = true
             }
             
@@ -113,6 +112,7 @@ struct SplashScreen: View {
                 handleGetStarted()
             }
         }
+        .statusBarStyle(.lightContent)
     }
     
     private func handleGetStarted() {
@@ -129,4 +129,4 @@ struct SplashScreen: View {
 #Preview {
     SplashScreen()
         .environmentObject(AppState())
-} 
+}

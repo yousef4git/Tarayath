@@ -40,9 +40,9 @@ struct UserData: Codable {
     
     init() {
         self.fullName = ""
-        self.monthlyIncome = 0
-        self.monthlyObligations = 0
-        self.currentBalance = 0
+        self.monthlyIncome = 0  // This will be set from string input
+        self.monthlyObligations = 0  // This will be set from string input
+        self.currentBalance = 0  // This will be set from string input
         self.currency = .SAR
         self.language = .english
     }
@@ -104,4 +104,4 @@ struct PurchaseDecision: Codable, Identifiable {
         self.purchasedDate = purchased ? Date() : nil
         self.createdAt = Date()
     }
-} 
+}

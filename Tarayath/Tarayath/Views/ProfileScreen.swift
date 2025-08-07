@@ -27,7 +27,7 @@ struct ProfileScreen: View {
             appSettings: "App Settings",
             editProfile: "Edit Profile",
             resetData: "Reset All Data",
-            backToDashboard: "Back to Dashboard",
+            backToDashboard: "",
             resetConfirmation: "Are you sure you want to reset all data?",
             resetWarning: "This action cannot be undone.",
             cancel: "Cancel",
@@ -52,7 +52,7 @@ struct ProfileScreen: View {
             appSettings: "إعدادات التطبيق",
             editProfile: "تعديل الملف الشخصي",
             resetData: "إعادة تعيين جميع البيانات",
-            backToDashboard: "العودة للوحة الرئيسية",
+            backToDashboard: "",
             resetConfirmation: "هل أنت متأكد من إعادة تعيين جميع البيانات؟",
             resetWarning: "لا يمكن التراجع عن هذا الإجراء.",
             cancel: "إلغاء",
@@ -101,7 +101,6 @@ struct ProfileScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -114,13 +113,13 @@ struct ProfileScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
                         VStack(spacing: 24) {
                             // Personal Information Section
                             personalInfoSection
+                            
                             
                             // Financial Summary Section
                             financialSummarySection
@@ -131,10 +130,11 @@ struct ProfileScreen: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                         .padding(.bottom, 40)
+                        
                     }
                 }
             }
-        }
+        
         .confirmationDialog(t.resetConfirmation, isPresented: $showingResetConfirmation) {
             Button(t.reset, role: .destructive) {
                 appState.resetApp()
@@ -170,7 +170,7 @@ struct ProfileScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -196,8 +196,8 @@ struct ProfileScreen: View {
             Text(t.personalInfo)
                 .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
-                .padding(.bottom, 8)
-            
+                .padding(.bottom,8)
+                .padding()
             VStack(spacing: 12) {
                 InfoRow(label: t.fullName, value: userData.fullName.isEmpty ? "N/A" : userData.fullName)
                 InfoRow(label: t.monthlyIncome, value: CurrencyFormatter.format(userData.monthlyIncome, currency: userData.currency))
@@ -226,6 +226,7 @@ struct ProfileScreen: View {
                 .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
                 .padding(.bottom, 8)
+                .padding()
             
             VStack(spacing: 12) {
                 InfoRow(label: t.totalSavingsPlans, value: "\(appState.savingsPlans.count)")
@@ -243,6 +244,7 @@ struct ProfileScreen: View {
                 .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
                 .padding(.bottom, 8)
+                .padding()
             
             Button(action: {
                 showingResetConfirmation = true
@@ -392,4 +394,4 @@ struct EditProfileView: View {
 #Preview {
     ProfileScreen()
         .environmentObject(AppState())
-} 
+}
