@@ -112,6 +112,7 @@ struct PurchaseDecisionScreen: View {
                 }
             )
         }
+        .environment(\.layoutDirection, userData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
     private var headerView: some View {
@@ -215,7 +216,10 @@ struct PurchaseDecisionScreen: View {
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
+    
 }
+
+// MARK: - Supporting Views
 
 struct PurchaseDecisionCard: View {
     let decision: PurchaseDecision

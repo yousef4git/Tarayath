@@ -256,6 +256,8 @@ struct SavingsPlanScreen: View {
     }
 }
 
+// MARK: - Supporting Views
+
 struct SavingsPlanCard: View {
     let plan: SavingsPlan
     let texts: SavingsPlanScreen.SavingsTexts

@@ -277,6 +277,8 @@ struct ProfileScreen: View {
     }
 }
 
+// MARK: - Supporting Views
+
 struct InfoRow: View {
     let label: String
     let value: String
