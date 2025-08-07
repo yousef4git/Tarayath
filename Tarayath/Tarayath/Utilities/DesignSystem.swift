@@ -2,6 +2,7 @@ import SwiftUI
 
 // MARK: - Color Extensions
 extension Color {
+    // Adaptive colors that change with light/dark mode
     static let appBackground = Color("AppBackground")
     static let appForeground = Color("AppForeground")
     static let appPrimary = Color("AppPrimary")
@@ -11,11 +12,50 @@ extension Color {
     static let appCard = Color("AppCard")
     static let appBorder = Color("AppBorder")
     
-    // Define colors directly for immediate use
-    static let darkGreen = Color(hex: "#435446")
-    static let mediumGreen = Color(hex: "#819067")
-    static let creamWhite = Color(hex: "#FEFAE0")
-    static let lightBrown = Color(hex: "#B1AB86")
+    // Theme colors that adapt to light/dark mode
+    static let darkGreen = Color("DarkGreen")
+    static let mediumGreen = Color("MediumGreen")
+    static let creamWhite = Color("CreamWhite")
+    static let lightBrown = Color("LightBrown")
+    
+    // Fallback colors for immediate use
+    static let darkGreenFallback = Color(hex: "#435446")
+    static let mediumGreenFallback = Color(hex: "#819067")
+    static let creamWhiteFallback = Color(hex: "#FEFAE0")
+    static let lightBrownFallback = Color(hex: "#B1AB86")
+    
+    // Dynamic background colors
+    static let dynamicBackground: Color = {
+        Color(UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ?
+                UIColor(red: 0.12, green: 0.12, blue: 0.12, alpha: 1.0) : // Dark background
+                UIColor(red: 0.996, green: 0.98, blue: 0.878, alpha: 1.0) // Light cream
+        })
+    }()
+    
+    static let dynamicCardBackground: Color = {
+        Color(UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ?
+                UIColor(red: 0.18, green: 0.18, blue: 0.18, alpha: 1.0) : // Dark card
+                UIColor.white // Light card
+        })
+    }()
+    
+    static let dynamicText: Color = {
+        Color(UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ?
+                UIColor.white : // Dark text
+                UIColor(red: 0.263, green: 0.329, blue: 0.275, alpha: 1.0) // Dark green
+        })
+    }()
+    
+    static let dynamicSecondaryText: Color = {
+        Color(UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ?
+                UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0) : // Light gray
+                UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0) // Medium gray
+        })
+    }()
 }
 
 extension Color {
@@ -58,13 +98,19 @@ struct AppTypography {
 
 // MARK: - Button Styles
 struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) var colorScheme
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.button)
-            .foregroundColor(.creamWhite)
+            .foregroundColor(colorScheme == .dark ? .black : .creamWhiteFallback)
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
-            .background(Color.mediumGreen)
+            .background(
+                colorScheme == .dark ? 
+                    Color.mediumGreenFallback.opacity(0.9) : 
+                    Color.mediumGreenFallback
+            )
             .cornerRadius(12)
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
@@ -72,13 +118,23 @@ struct PrimaryButtonStyle: ButtonStyle {
 }
 
 struct SecondaryButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) var colorScheme
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.button)
-            .foregroundColor(.darkGreen)
+            .foregroundColor(
+                colorScheme == .dark ? 
+                    .white : 
+                    .darkGreenFallback
+            )
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
-            .background(Color.lightBrown)
+            .background(
+                colorScheme == .dark ? 
+                    Color.gray.opacity(0.3) : 
+                    Color.lightBrownFallback
+            )
             .cornerRadius(12)
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
@@ -86,16 +142,27 @@ struct SecondaryButtonStyle: ButtonStyle {
 }
 
 struct OutlineButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) var colorScheme
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.button)
-            .foregroundColor(.darkGreen)
+            .foregroundColor(
+                colorScheme == .dark ? 
+                    .white : 
+                    .darkGreenFallback
+            )
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
             .background(Color.clear)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.mediumGreen.opacity(0.3), lineWidth: 1)
+                    .stroke(
+                        colorScheme == .dark ? 
+                            Color.gray.opacity(0.5) : 
+                            Color.mediumGreenFallback.opacity(0.3), 
+                        lineWidth: 1
+                    )
             )
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
@@ -104,14 +171,26 @@ struct OutlineButtonStyle: ButtonStyle {
 
 // MARK: - Card Style
 struct AppCardStyle: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
     func body(content: Content) -> some View {
         content
-            .background(Color.white)
+            .background(Color.dynamicCardBackground)
             .cornerRadius(16)
-            .shadow(color: Color.mediumGreen.opacity(0.1), radius: 4, x: 0, y: 2)
+            .shadow(
+                color: colorScheme == .dark ? 
+                    Color.black.opacity(0.3) : 
+                    Color.mediumGreenFallback.opacity(0.1), 
+                radius: 4, x: 0, y: 2
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.mediumGreen.opacity(0.1), lineWidth: 1)
+                    .stroke(
+                        colorScheme == .dark ? 
+                            Color.gray.opacity(0.3) : 
+                            Color.mediumGreenFallback.opacity(0.1), 
+                        lineWidth: 1
+                    )
             )
     }
 }

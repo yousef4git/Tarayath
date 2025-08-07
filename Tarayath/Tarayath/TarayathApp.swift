@@ -41,7 +41,7 @@ struct MainContentView: View {
         }
         .frame(maxWidth: 428, maxHeight: .infinity, alignment: .top)
         .ignoresSafeArea(.keyboard)
-        .background(Color.appBackground)
+        .background(Color.dynamicBackground)
         .onAppear {
             appState.loadInitialData()
         }

@@ -79,20 +79,19 @@ struct SavingsPlanScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header
-                    headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
+        ZStack {
+            // Background
+            LinearGradient(
+                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header
+                headerView
+                    .padding(.top, 16)
                     
                     // Content
                     ScrollView {

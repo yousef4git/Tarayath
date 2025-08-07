@@ -65,20 +65,19 @@ struct PurchaseDecisionScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header
-                    headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
+        ZStack {
+            // Background
+            LinearGradient(
+                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header
+                headerView
+                    .padding(.top, 16)
                     
                     // Content
                     ScrollView {
@@ -327,82 +326,10 @@ struct PurchaseDecisionCard: View {
     }
 }
 
-// MARK: - Purchase Decision Enums
-enum PurchaseFeeling: String, CaseIterable {
-    case reallyExcited = "really_excited"
-    case prettyHappy = "pretty_happy"
-    case itsOkay = "its_okay"
-    case unsure = "unsure"
-    
-    var emoji: String {
-        switch self {
-        case .reallyExcited: return "🤩"
-        case .prettyHappy: return "🙂"
-        case .itsOkay: return "😐"
-        case .unsure: return "🤔"
-        }
-    }
-    
-    var text: String {
-        switch self {
-        case .reallyExcited: return "Really Excited!"
-        case .prettyHappy: return "Pretty Happy"
-        case .itsOkay: return "It's Okay"
-        case .unsure: return "Unsure..."
-        }
-    }
-}
+// Old enums removed - using new Decision Helper implementation
 
-enum PurchaseUrgency: String, CaseIterable {
-    case rightNow = "right_now"
-    case thisMonth = "this_month"
-    case sometimeSoon = "sometime_soon"
-    case noRush = "no_rush"
-    
-    var emoji: String {
-        switch self {
-        case .rightNow: return "⚡️"
-        case .thisMonth: return "📅"
-        case .sometimeSoon: return "⏳"
-        case .noRush: return "🌱"
-        }
-    }
-    
-    var text: String {
-        switch self {
-        case .rightNow: return "Right now!"
-        case .thisMonth: return "This month"
-        case .sometimeSoon: return "Sometime soon"
-        case .noRush: return "No rush"
-        }
-    }
-}
-
-enum PurchaseHelpType: String, CaseIterable {
-    case essentialForWork = "essential_for_work"
-    case improvesLife = "improves_life"
-    case niceToHave = "nice_to_have"
-    case justWantIt = "just_want_it"
-    
-    var emoji: String {
-        switch self {
-        case .essentialForWork: return "🧳"
-        case .improvesLife: return "🌟"
-        case .niceToHave: return "👍"
-        case .justWantIt: return "👍"
-        }
-    }
-    
-    var text: String {
-        switch self {
-        case .essentialForWork: return "Essential for work/study"
-        case .improvesLife: return "Improves my life"
-        case .niceToHave: return "Nice to have"
-        case .justWantIt: return "Just want it"
-        }
-    }
-}
-
+// OLD IMPLEMENTATION REMOVED
+/*
 struct NewPurchaseDecisionView: View {
     let userData: UserData
     let savingsPlans: [SavingsPlan]
@@ -923,6 +850,7 @@ struct NewPurchaseDecisionView: View {
         onSave(decision)
     }
 }
+*/
 
 // MARK: - New Decision Helper Flow
 

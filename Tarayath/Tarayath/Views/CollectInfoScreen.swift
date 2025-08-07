@@ -77,20 +77,19 @@ struct CollectInfoScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background Gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header with Language Toggle
-                    headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
+        ZStack {
+            // Background Gradient
+            LinearGradient(
+                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header with Language Toggle
+                headerView
+                    .padding(.top, 16)
                     
                     // Form Content
                     ScrollView {
@@ -110,7 +109,7 @@ struct CollectInfoScreen: View {
                             }
                         }
                         .padding(.horizontal, 24)
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 32)
+                        .padding(.bottom, 32)
                     }
                 }
             }
