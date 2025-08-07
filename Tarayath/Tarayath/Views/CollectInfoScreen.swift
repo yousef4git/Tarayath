@@ -5,6 +5,11 @@ struct CollectInfoScreen: View {
     @State private var formData = UserData()
     @State private var formErrors = FormErrors()
     
+    // Add string representations for the numeric fields
+    @State private var monthlyIncomeText = ""
+    @State private var monthlyObligationsText = ""
+    @State private var currentBalanceText = ""
+    
     struct FormErrors {
         var fullName = false
         var monthlyIncome = false
@@ -72,8 +77,10 @@ struct CollectInfoScreen: View {
     
     private var isFormValid: Bool {
         !formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        formData.monthlyIncome > 0 &&
-        formData.currentBalance >= 0
+        !monthlyIncomeText.isEmpty &&
+        Double(monthlyIncomeText) ?? 0 > 0 &&
+        !currentBalanceText.isEmpty &&
+        Double(currentBalanceText) ?? 0 >= 0
     }
 
     var body: some View {
@@ -229,48 +236,56 @@ struct CollectInfoScreen: View {
                 }
             )
             
-            // Monthly Income Field
+            // Monthly Income Field - Updated to use string input
             EnhancedFormField(
                 title: t.monthlyIncome,
                 placeholder: t.monthlyIncomePlaceholder,
-                value: $formData.monthlyIncome,
+                textValue: $monthlyIncomeText,
                 currency: formData.currency,
                 isRequired: true,
                 hasError: formErrors.monthlyIncome,
                 errorMessage: t.required,
                 icon: "dollarsign.circle.fill",
                 fieldType: .currency,
-                onValueChange: { _ in
+                onTextValueChange: { newValue in
+                    monthlyIncomeText = newValue
+                    formData.monthlyIncome = Double(newValue) ?? 0
                     if formErrors.monthlyIncome {
                         formErrors.monthlyIncome = false
                     }
                 }
             )
             
-            // Monthly Obligations Field
+            // Monthly Obligations Field - Updated to use string input
             EnhancedFormField(
                 title: t.monthlyObligations,
                 subtitle: t.monthlyObligationsOptional,
                 placeholder: t.monthlyObligationsPlaceholder,
-                value: $formData.monthlyObligations,
+                textValue: $monthlyObligationsText,
                 currency: formData.currency,
                 isRequired: false,
                 icon: "list.bullet.circle.fill",
-                fieldType: .currency
+                fieldType: .currency,
+                onTextValueChange: { newValue in
+                    monthlyObligationsText = newValue
+                    formData.monthlyObligations = Double(newValue) ?? 0
+                }
             )
             
-            // Current Balance Field
+            // Current Balance Field - Updated to use string input
             EnhancedFormField(
                 title: t.currentBalance,
                 placeholder: t.currentBalancePlaceholder,
-                value: $formData.currentBalance,
+                textValue: $currentBalanceText,
                 currency: formData.currency,
                 isRequired: true,
                 hasError: formErrors.currentBalance,
                 errorMessage: t.required,
                 icon: "creditcard.fill",
                 fieldType: .currency,
-                onValueChange: { _ in
+                onTextValueChange: { newValue in
+                    currentBalanceText = newValue
+                    formData.currentBalance = Double(newValue) ?? 0
                     if formErrors.currentBalance {
                         formErrors.currentBalance = false
                     }
@@ -373,8 +388,8 @@ struct CollectInfoScreen: View {
     
     private func validateForm() -> Bool {
         formErrors.fullName = formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        formErrors.monthlyIncome = formData.monthlyIncome <= 0
-        formErrors.currentBalance = formData.currentBalance < 0
+        formErrors.monthlyIncome = monthlyIncomeText.isEmpty || (Double(monthlyIncomeText) ?? 0) <= 0
+        formErrors.currentBalance = currentBalanceText.isEmpty || (Double(currentBalanceText) ?? 0) < 0
         
         return !hasErrors
     }
@@ -383,6 +398,10 @@ struct CollectInfoScreen: View {
         guard validateForm() else { return }
         
         formData.fullName = formData.fullName.trimmingCharacters(in: .whitespacesAndNewlines)
+        formData.monthlyIncome = Double(monthlyIncomeText) ?? 0
+        formData.monthlyObligations = Double(monthlyObligationsText) ?? 0
+        formData.currentBalance = Double(currentBalanceText) ?? 0
+        
         appState.updateUserData(formData)
         appState.navigateToScreen(.dashboard)
     }
@@ -400,6 +419,7 @@ struct EnhancedFormField: View {
     var subtitle: String? = nil
     let placeholder: String
     var text: Binding<String>?
+    var textValue: Binding<String>?  // New parameter for string-based currency fields
     var value: Binding<Double>?
     var currency: Currency?
     let isRequired: Bool
@@ -408,6 +428,7 @@ struct EnhancedFormField: View {
     let icon: String
     let fieldType: FieldType
     var onTextChange: ((String) -> Void)?
+    var onTextValueChange: ((String) -> Void)?  // New parameter for string-based currency fields
     var onValueChange: ((Double) -> Void)?
     
     var body: some View {
@@ -445,28 +466,8 @@ struct EnhancedFormField: View {
                         .foregroundColor(Color.darkGreen)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.creamWhite.opacity(0.8),
-                                            Color.lightBrown.opacity(0.3)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(
-                                    hasError 
-                                        ? Color.red
-                                        : Color.mediumGreen.opacity(0.4),
-                                    lineWidth: hasError ? 2 : 1.5
-                                )
-                        )
+                        .background(fieldBackground)
+                        .overlay(fieldOverlay)
                         .shadow(
                             color: Color.mediumGreen.opacity(0.1),
                             radius: 4,
@@ -476,45 +477,53 @@ struct EnhancedFormField: View {
                         .onChange(of: textBinding.wrappedValue) { _, newValue in
                             onTextChange?(newValue)
                         }
-                } else if fieldType == .currency, let valueBinding = value {
-                    TextField(placeholder, value: valueBinding, format: .number)
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundColor(Color.darkGreen)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
-                        .padding(.trailing, currency != nil ? 50 : 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.creamWhite.opacity(0.8),
-                                            Color.lightBrown.opacity(0.3)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(
-                                    hasError 
-                                        ? Color.red
-                                        : Color.mediumGreen.opacity(0.4),
-                                    lineWidth: hasError ? 2 : 1.5
-                                )
-                        )
-                        .shadow(
-                            color: Color.mediumGreen.opacity(0.1),
-                            radius: 4,
-                            x: 0,
-                            y: 2
-                        )
-                        .keyboardType(.decimalPad)
-                        .onChange(of: valueBinding.wrappedValue) { _, newValue in
-                            onValueChange?(newValue)
-                        }
+                } else if fieldType == .currency {
+                    if let textValueBinding = textValue {
+                        // String-based currency field (for empty default)
+                        TextField(placeholder, text: textValueBinding)
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundColor(Color.darkGreen)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                            .padding(.trailing, currency != nil ? 50 : 20)
+                            .background(fieldBackground)
+                            .overlay(fieldOverlay)
+                            .shadow(
+                                color: Color.mediumGreen.opacity(0.1),
+                                radius: 4,
+                                x: 0,
+                                y: 2
+                            )
+                            .keyboardType(.decimalPad)
+                            .onChange(of: textValueBinding.wrappedValue) { _, newValue in
+                                // Filter input to only allow numbers and decimal point
+                                let filtered = newValue.filter { "0123456789.".contains($0) }
+                                if filtered != newValue {
+                                    textValueBinding.wrappedValue = filtered
+                                }
+                                onTextValueChange?(filtered)
+                            }
+                    } else if let valueBinding = value {
+                        // Original double-based currency field (legacy support)
+                        TextField(placeholder, value: valueBinding, format: .number)
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundColor(Color.darkGreen)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                            .padding(.trailing, currency != nil ? 50 : 20)
+                            .background(fieldBackground)
+                            .overlay(fieldOverlay)
+                            .shadow(
+                                color: Color.mediumGreen.opacity(0.1),
+                                radius: 4,
+                                x: 0,
+                                y: 2
+                            )
+                            .keyboardType(.decimalPad)
+                            .onChange(of: valueBinding.wrappedValue) { _, newValue in
+                                onValueChange?(newValue)
+                            }
+                    }
                 }
                 
                 // Currency Symbol
@@ -538,6 +547,31 @@ struct EnhancedFormField: View {
                 }
             }
         }
+    }
+    
+    // Computed properties to reduce code duplication
+    private var fieldBackground: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.creamWhite.opacity(0.8),
+                        Color.lightBrown.opacity(0.3)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+    }
+    
+    private var fieldOverlay: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                hasError 
+                    ? Color.red
+                    : Color.mediumGreen.opacity(0.4),
+                lineWidth: hasError ? 2 : 1.5
+            )
     }
 }
 
