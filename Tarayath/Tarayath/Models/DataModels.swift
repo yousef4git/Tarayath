@@ -1,29 +1,5 @@
 import Foundation
 
-// MARK: - Decision Helper Enums
-
-enum PurchaseVerdict: String, CaseIterable, Codable {
-    case yes = "yes"
-    case wait = "wait"
-    case no = "no"
-    
-    var displayText: String {
-        switch self {
-        case .yes: return "Yes - Go ahead"
-        case .wait: return "Wait or reconsider"
-        case .no: return "Not recommended now"
-        }
-    }
-    
-    var emoji: String {
-        switch self {
-        case .yes: return "✅"
-        case .wait: return "⚠️"
-        case .no: return "❌"
-        }
-    }
-}
-
 enum Screen: CaseIterable {
     case splash
     case collectInfo
@@ -117,41 +93,6 @@ struct PurchaseDecision: Codable, Identifiable {
     var purchasedDate: Date?
     var createdAt: Date
     
-    // New Decision Helper Fields
-    var whyReason: String
-    var hasDuplicate: Bool
-    var wantedSince: String
-    var urgency: String
-    var emojiFeel: String
-    var emojiWhen: String
-    var emojiHelp: String
-    var finalVerdict: PurchaseVerdict
-    var insightCards: [String: String] // Key-value pairs for the 4 insight cards
-    
-    init(item: String, price: Double) {
-        self.id = UUID().uuidString
-        self.item = item
-        self.price = price
-        self.decision = ""
-        self.reasoning = [:]
-        self.answers = [:]
-        self.purchased = false
-        self.purchasedDate = nil
-        self.createdAt = Date()
-        
-        // Initialize new fields with defaults
-        self.whyReason = ""
-        self.hasDuplicate = false
-        self.wantedSince = ""
-        self.urgency = ""
-        self.emojiFeel = ""
-        self.emojiWhen = ""
-        self.emojiHelp = ""
-        self.finalVerdict = .wait
-        self.insightCards = [:]
-    }
-    
-    // Legacy init for backward compatibility
     init(item: String, price: Double, decision: String, reasoning: [String: String], answers: [String: String], purchased: Bool) {
         self.id = UUID().uuidString
         self.item = item
@@ -162,16 +103,5 @@ struct PurchaseDecision: Codable, Identifiable {
         self.purchased = purchased
         self.purchasedDate = purchased ? Date() : nil
         self.createdAt = Date()
-        
-        // Initialize new fields with defaults
-        self.whyReason = ""
-        self.hasDuplicate = false
-        self.wantedSince = ""
-        self.urgency = ""
-        self.emojiFeel = ""
-        self.emojiWhen = ""
-        self.emojiHelp = ""
-        self.finalVerdict = .wait
-        self.insightCards = [:]
     }
 } 

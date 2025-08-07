@@ -79,19 +79,20 @@ struct SavingsPlanScreen: View {
     }
     
     var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header
-                headerView
-                    .padding(.top, 16)
+        GeometryReader { geometry in
+            ZStack {
+                // Background
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Header
+                    headerView
+                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -133,7 +134,6 @@ struct SavingsPlanScreen: View {
                 }
             )
         }
-        .environment(\.layoutDirection, userData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
     private var headerView: some View {
@@ -255,8 +255,7 @@ struct SavingsPlanScreen: View {
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
-
-// MARK: - Supporting Views
+}
 
 struct SavingsPlanCard: View {
     let plan: SavingsPlan

@@ -101,19 +101,20 @@ struct ProfileScreen: View {
     }
     
     var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header
-                headerView
-                    .padding(.top, 16)
+        GeometryReader { geometry in
+            ZStack {
+                // Background
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Header
+                    headerView
+                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -216,10 +217,7 @@ struct ProfileScreen: View {
             .buttonStyle(PrimaryButtonStyle())
             .padding(.top, 8)
         }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .modifier(AppCardStyle())
     }
     
     private var financialSummarySection: some View {
@@ -236,10 +234,7 @@ struct ProfileScreen: View {
                 InfoRow(label: t.totalDecisions, value: "\(appState.purchaseDecisions.count)")
             }
         }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .modifier(AppCardStyle())
     }
     
     private var appSettingsSection: some View {
@@ -270,38 +265,26 @@ struct ProfileScreen: View {
                 )
             }
         }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .modifier(AppCardStyle())
     }
 }
-
-// MARK: - Supporting Views
 
 struct InfoRow: View {
     let label: String
     let value: String
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack {
             Text(label)
                 .font(AppTypography.callout)
                 .foregroundColor(.secondary)
-                .frame(width: 120, alignment: .leading)
-                .lineLimit(2)
-
             Spacer()
-
             Text(value)
                 .font(AppTypography.callout)
                 .foregroundColor(.darkGreen)
                 .fontWeight(.medium)
-                .multilineTextAlignment(.trailing)
-                .lineLimit(2)
-                .minimumScaleFactor(0.9)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 4)
     }
 }
 

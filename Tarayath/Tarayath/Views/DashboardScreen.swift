@@ -89,19 +89,20 @@ struct DashboardScreen: View {
     }
     
     var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header
-                headerView
-                    .padding(.top, 16)
+        GeometryReader { geometry in
+            ZStack {
+                // Background
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Header
+                    headerView
+                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -117,7 +118,7 @@ struct DashboardScreen: View {
                             budgetAllocationCard
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, geometry.safeAreaInsets.bottom + 40)
                     }
                 }
                 

@@ -77,19 +77,20 @@ struct CollectInfoScreen: View {
     }
     
     var body: some View {
-        ZStack {
-            // Background Gradient
-            LinearGradient(
-                gradient: Gradient(colors: [Color.dynamicBackground, Color.mediumGreenFallback.opacity(0.08)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header with Language Toggle
-                headerView
-                    .padding(.top, 16)
+        GeometryReader { geometry in
+            ZStack {
+                // Background Gradient
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Header with Language Toggle
+                    headerView
+                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Form Content
                     ScrollView {
@@ -109,7 +110,7 @@ struct CollectInfoScreen: View {
                             }
                         }
                         .padding(.horizontal, 24)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, geometry.safeAreaInsets.bottom + 32)
                     }
                 }
             }
@@ -160,12 +161,16 @@ struct CollectInfoScreen: View {
     private var titleSection: some View {
         VStack(spacing: 24) {
             // App Logo
-            Image("Logo")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100)
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+            ZStack {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.mediumGreen)
+                    .frame(width: 80, height: 80)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                
+                Text("T")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(.creamWhite)
+            }
             
             VStack(spacing: 8) {
                 Text(t.title)
