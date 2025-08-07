@@ -77,41 +77,36 @@ struct CollectInfoScreen: View {
     }
     
     var body: some View {
-            ZStack {
-                // Background Gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+        ZStack {
+            // Background Gradient - Updated
+            AppGradients.primaryGradient
                 .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header with Language Toggle
+                headerView
                 
-                VStack(spacing: 0) {
-                    // Header with Language Toggle
-                    headerView
-                    
-                    // Form Content
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            // App Logo and Title
-                            titleSection
-                            
-                            // Form Fields
-                            formSection
-                            
-                            // Submit Button
-                            submitButton
-                            
-                            // Error Message
-                            if !isFormValid && hasErrors {
-                                errorMessage
-                            }
+                // Form Content
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // App Logo and Title
+                        titleSection
+                        
+                        // Form Fields
+                        formSection
+                        
+                        // Submit Button
+                        submitButton
+                        
+                        // Error Message
+                        if !isFormValid && hasErrors {
+                            errorMessage
                         }
-                        .padding(.horizontal, 24)
                     }
+                    .padding(.horizontal, 24)
                 }
             }
-        
+        }
         .environment(\.layoutDirection, formData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
@@ -134,58 +129,54 @@ struct CollectInfoScreen: View {
             Button("EN") {
                 formData.language = .english
             }
-            .foregroundColor(formData.language == .english ? .creamWhite : .darkGreen)
+            .foregroundColor(formData.language == .english ? Color.creamWhite : Color.primaryText)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(formData.language == .english ? Color.mediumGreen : Color.clear)
+            .background(formData.language == .english ? Color.primaryBackground : Color.clear)
             .cornerRadius(8)
             
             Button("AR") {
                 formData.language = .arabic
             }
-            .foregroundColor(formData.language == .arabic ? .creamWhite : .darkGreen)
+            .foregroundColor(formData.language == .arabic ? Color.creamWhite : Color.primaryText)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(formData.language == .arabic ? Color.mediumGreen : Color.clear)
+            .background(formData.language == .arabic ? Color.primaryBackground : Color.clear)
             .cornerRadius(8)
         }
         .padding(4)
-        .background(Color.white.opacity(0.9))
+        .background(Color.cardBackground.opacity(0.9))
         .cornerRadius(12)
-        .shadow(color: Color.mediumGreen.opacity(0.2), radius: 2, x: 0, y: 1)
+        .shadow(color: Color.primaryBackground.opacity(0.2), radius: 2, x: 0, y: 1)
     }
     
     private var titleSection: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 20) {
             // App Logo
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.mediumGreen)
+                    .fill(Color.primaryBackground)
                     .frame(width: 80, height: 80)
                     .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 
-                
                 Image("logo")
-                           .resizable()
-                           .scaledToFit() //
-                           .frame(width: 250, height: 250)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
             }
             
             VStack(spacing: 8) {
                 Text(t.title)
                     .font(AppTypography.largeTitle)
-                    .foregroundColor(.darkGreen)
+                    .foregroundColor(Color.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(t.subtitle)
                     .font(AppTypography.callout)
-                    .foregroundColor(.darkGreen.opacity(0.7))
+                    .foregroundColor(Color.secondaryText)
                     .multilineTextAlignment(.center)
             }
-            
         }
-        
-        
     }
     
     private var formSection: some View {
@@ -257,8 +248,8 @@ struct CollectInfoScreen: View {
     private var currencySelection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(t.currency)
-                .font(AppTypography.callout)
-                .foregroundColor(.darkGreen)
+                .font(AppTypography.headline)
+                .foregroundColor(Color.primaryText)
                 
             HStack(spacing: 12) {
                 CurrencyButton(
@@ -278,8 +269,7 @@ struct CollectInfoScreen: View {
                 }
             }
         }
-        
-        .padding()}
+    }
     
     private var submitButton: some View {
         Button(action: handleSubmit) {
@@ -297,7 +287,7 @@ struct CollectInfoScreen: View {
     
     private var errorMessage: some View {
         Text(t.pleaseComplete)
-            .font(AppTypography.caption)
+            .font(AppTypography.footnote)
             .foregroundColor(.red)
             .multilineTextAlignment(.center)
     }
@@ -335,12 +325,11 @@ struct FormField: View {
     var onValueChange: ((Double) -> Void)?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(title)
-                    .font(AppTypography.callout)
-                    .foregroundColor(.darkGreen)
-                    .padding()
+                    .font(AppTypography.headline)
+                    .foregroundColor(Color.primaryText)
                 
                 if isRequired {
                     Text("*")
@@ -349,8 +338,8 @@ struct FormField: View {
                 
                 if let subtitle = subtitle {
                     Text("(\(subtitle))")
-                        .font(AppTypography.caption)
-                        .foregroundColor(.darkGreen.opacity(0.6))
+                        .font(AppTypography.caption1)
+                        .foregroundColor(Color.secondaryText)
                 }
                 
                 Spacer()
@@ -360,14 +349,14 @@ struct FormField: View {
                 if let textBinding = text {
                     TextField(placeholder, text: textBinding)
                         .textFieldStyle(AppTextFieldStyle(hasError: hasError))
-                        .onChange(of: textBinding.wrappedValue) { newValue in
+                        .onChange(of: textBinding.wrappedValue) { _, newValue in
                             onTextChange?(newValue)
                         }
                 } else if let valueBinding = value {
                     TextField(placeholder, value: valueBinding, format: .number)
                         .textFieldStyle(AppTextFieldStyle(hasError: hasError))
                         .keyboardType(.decimalPad)
-                        .onChange(of: valueBinding.wrappedValue) { newValue in
+                        .onChange(of: valueBinding.wrappedValue) { _, newValue in
                             onValueChange?(newValue)
                         }
                 }
@@ -375,32 +364,17 @@ struct FormField: View {
                 if let currency = currency {
                     Text(currency.symbol)
                         .font(AppTypography.callout)
-                        .foregroundColor(.darkGreen.opacity(0.6))
+                        .foregroundColor(Color.secondaryText)
                         .padding(.trailing, 16)
                 }
             }
             
             if hasError && !errorMessage.isEmpty {
                 Text(errorMessage)
-                    .font(AppTypography.caption)
+                    .font(AppTypography.footnote)
                     .foregroundColor(.red)
             }
         }
-    }
-}
-
-struct AppTextFieldStyle: TextFieldStyle {
-    let hasError: Bool
-    
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding(16)
-            .background(Color.mediumGreen.opacity(0.05))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(hasError ? Color.red : Color.mediumGreen.opacity(0.2), lineWidth: 1)
-            )
     }
 }
 
@@ -416,19 +390,19 @@ struct CurrencyButton: View {
                 Text(title)
                     .font(AppTypography.callout)
                     .fontWeight(.medium)
-                    .foregroundColor(.darkGreen)
+                    .foregroundColor(Color.primaryText)
                 
                 Text(subtitle)
-                    .font(AppTypography.caption)
-                    .foregroundColor(.darkGreen.opacity(0.6))
+                    .font(AppTypography.caption1)
+                    .foregroundColor(Color.secondaryText)
             }
             .frame(maxWidth: .infinity)
             .padding(16)
-            .background(isSelected ? Color.mediumGreen.opacity(0.1) : Color.clear)
+            .background(isSelected ? Color.primaryBackground.opacity(0.1) : Color.clear)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.mediumGreen : Color.mediumGreen.opacity(0.2), lineWidth: 2)
+                    .stroke(isSelected ? Color.primaryBackground : Color.primaryBackground.opacity(0.2), lineWidth: 2)
             )
         }
     }
@@ -437,4 +411,4 @@ struct CurrencyButton: View {
 #Preview {
     CollectInfoScreen()
         .environmentObject(AppState())
-} 
+}

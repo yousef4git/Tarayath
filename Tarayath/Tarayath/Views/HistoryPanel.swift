@@ -147,7 +147,7 @@ struct HistoryPanel: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -291,7 +291,7 @@ struct HistorySavingsPlanCard: View {
                         .foregroundColor(.darkGreen)
                     
                     Text(formatDate(plan.createdAt))
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.darkGreen.opacity(0.6))
                 }
                 
@@ -351,7 +351,7 @@ struct HistoryPurchaseDecisionCard: View {
                         .foregroundColor(.darkGreen)
                     
                     Text(formatDate(decision.createdAt))
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.darkGreen.opacity(0.6))
                 }
                 
@@ -402,7 +402,7 @@ struct HistoryStatusBadge: View {
     
     var body: some View {
         Text(text)
-            .font(AppTypography.caption)
+            .font(AppTypography.caption1)
             .fontWeight(.medium)
             .foregroundColor(color)
             .padding(.horizontal, 8)
@@ -449,13 +449,13 @@ struct HistoryDetailRow: View {
     var body: some View {
         HStack {
             Text(title)
-                .font(AppTypography.caption)
+                .font(AppTypography.caption1)
                 .foregroundColor(.darkGreen.opacity(0.7))
             
             Spacer()
             
             Text(value)
-                .font(AppTypography.caption)
+                .font(AppTypography.caption1)
                 .fontWeight(.medium)
                 .foregroundColor(.darkGreen)
         }
@@ -487,4 +487,4 @@ struct RoundedCorner: Shape {
 #Preview {
     HistoryPanel(isPresented: .constant(true))
         .environmentObject(AppState())
-} 
+}

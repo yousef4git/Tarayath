@@ -151,7 +151,7 @@ struct SavingsPlanScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -290,7 +290,7 @@ struct SavingsPlanCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(statusText)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(statusColor)
                         .fontWeight(.medium)
                 }
@@ -306,7 +306,7 @@ struct SavingsPlanCard: View {
                         .minimumScaleFactor(0.8)
                     
                     Text("of \(CurrencyFormatter.format(plan.targetAmount, currency: userData.currency))")
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -318,7 +318,7 @@ struct SavingsPlanCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(texts.planProgress)
-                        .font(AppTypography.callout)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     
                     Spacer()
@@ -350,7 +350,7 @@ struct SavingsPlanCard: View {
             HStack(spacing: 40) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.monthlyAmount)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     Text(CurrencyFormatter.format(plan.monthlyAmount, currency: userData.currency))
                         .font(AppTypography.callout)
@@ -362,7 +362,7 @@ struct SavingsPlanCard: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.duration)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                     Text("\(plan.duration) \(texts.months)")
                         .font(AppTypography.callout)
@@ -565,4 +565,4 @@ struct NewSavingsPlanView: View {
 #Preview {
     SavingsPlanScreen()
         .environmentObject(AppState())
-} 
+}

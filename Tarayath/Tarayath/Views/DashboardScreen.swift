@@ -89,42 +89,37 @@ struct DashboardScreen: View {
     }
     
     var body: some View {
-            ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+        ZStack {
+            // Background - Updated
+            AppGradients.primaryGradient
                 .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header
+                headerView
                 
-                VStack(spacing: 0) {
-                    // Header
-                    headerView
-                    
-                    // Content
-                    ScrollView {
-                        VStack(spacing: 28) {
-                            // Financial Overview
-                            financialOverviewCard
-                                .padding(.top, 16)
-                            
-                            // Action Buttons
-                            actionButtonsGrid
-                            
-                            // Budget Allocation
-                            budgetAllocationCard
-                        }
-                        .padding(.horizontal, 20)
+                // Content
+                ScrollView {
+                    VStack(spacing: 28) {
+                        // Financial Overview
+                        financialOverviewCard
+                            .padding(.top, 16)
+                        
+                        // Action Buttons
+                        actionButtonsGrid
+                        
+                        // Budget Allocation
+                        budgetAllocationCard
                     }
+                    .padding(.horizontal, 20)
                 }
-
             }
-            .sheet(isPresented: $showHistory) {
-                historyPanelOverlay
-            }
-        
+        }
+        .sheet(isPresented: $showHistory) {
+            historyPanelOverlay
+        }
         .environment(\.layoutDirection, userData.language.isRTL ? .rightToLeft : .leftToRight)
+        .statusBarStyle(.lightContent)
     }
     
     private var headerView: some View {
@@ -134,9 +129,9 @@ struct DashboardScreen: View {
                 Button(action: { showHistory = true }) {
                     Image(systemName: "clock.arrow.circlepath")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.darkGreen)
+                        .foregroundColor(Color.primaryText)
                         .frame(width: 40, height: 40)
-                        .background(Color.mediumGreen.opacity(0.1))
+                        .background(Color.primaryBackground.opacity(0.1))
                         .cornerRadius(20)
                 }
                 
@@ -145,12 +140,12 @@ struct DashboardScreen: View {
                 // Title
                 VStack(spacing: 4) {
                     Text(t.welcome(userData.fullName))
-                        .font(AppTypography.largeTitle)
-                        .foregroundColor(.darkGreen)
+                        .font(AppTypography.title2)
+                        .foregroundColor(Color.primaryText)
                     
                     Text(t.subtitle)
                         .font(AppTypography.callout)
-                        .foregroundColor(.darkGreen.opacity(0.7))
+                        .foregroundColor(Color.secondaryText)
                 }
                 
                 Spacer()
@@ -159,9 +154,9 @@ struct DashboardScreen: View {
                 Button(action: { appState.navigateToScreen(.profile) }) {
                     Image(systemName: "person.circle")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.darkGreen)
+                        .foregroundColor(Color.primaryText)
                         .frame(width: 40, height: 40)
-                        .background(Color.mediumGreen.opacity(0.1))
+                        .background(Color.primaryBackground.opacity(0.1))
                         .cornerRadius(20)
                 }
             }
@@ -169,10 +164,10 @@ struct DashboardScreen: View {
             .padding(.vertical, 24)
             
             Rectangle()
-                .fill(Color.mediumGreen.opacity(0.1))
+                .fill(Color.primaryBackground.opacity(0.1))
                 .frame(height: 1)
         }
-        .background(Color.white)
+        .background(Color.cardBackground.opacity(0.95))
     }
     
     private var financialOverviewCard: some View {
@@ -201,7 +196,7 @@ struct DashboardScreen: View {
                     title: t.monthlyObligations,
                     amount: userData.monthlyObligations,
                     currency: userData.currency,
-                    backgroundColor: Color.mediumGreen.opacity(0.05)
+                    backgroundColor: Color.primaryBackground.opacity(0.05)
                 )
                 
                 FinancialRowItem(
@@ -228,16 +223,14 @@ struct DashboardScreen: View {
         }
         .padding(28)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .appCardStyle()
     }
     
     private var activePlansSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("\(t.activePlans) (\(activeSavingsPlans.count))")
-                    .font(AppTypography.caption)
+                    .font(AppTypography.caption1)
                     .foregroundColor(.darkGreen.opacity(0.6))
                 Spacer()
             }
@@ -246,13 +239,13 @@ struct DashboardScreen: View {
                 ForEach(activeSavingsPlans.prefix(2)) { plan in
                     HStack {
                         Text(plan.goal)
-                            .font(AppTypography.caption)
+                            .font(AppTypography.caption1)
                             .foregroundColor(.darkGreen.opacity(0.7))
                         
                         Spacer()
                         
                         Text("\(CurrencyFormatter.format(plan.monthlyAmount, currency: userData.currency))/month")
-                            .font(AppTypography.caption)
+                            .font(AppTypography.caption1)
                             .foregroundColor(.darkGreen)
                     }
                 }
@@ -260,7 +253,7 @@ struct DashboardScreen: View {
                 if activeSavingsPlans.count > 2 {
                     HStack {
                         Text("+\(activeSavingsPlans.count - 2) more plans")
-                            .font(.system(size: 12, weight: .regular))
+                            .font(AppTypography.caption2)
                             .foregroundColor(.darkGreen.opacity(0.5))
                         Spacer()
                     }
@@ -421,7 +414,7 @@ struct FinancialStatCard: View {
         VStack(spacing: 12) {
             Text(title)
                 .font(AppTypography.callout)
-                .foregroundColor(.darkGreen.opacity(0.6))
+                .foregroundColor(Color.secondaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
@@ -429,9 +422,9 @@ struct FinancialStatCard: View {
             Spacer(minLength: 8)
             
             Text(CurrencyFormatter.format(amount, currency: currency))
-                .font(AppTypography.title)
+                .font(AppTypography.title2)
                 .fontWeight(.bold)
-                .foregroundColor(color)
+                .foregroundColor(Color.primaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
@@ -449,13 +442,13 @@ struct FinancialRowItem: View {
     let currency: Currency
     let backgroundColor: Color
     var isHighlighted: Bool = false
-    var amountColor: Color = .darkGreen
+    var amountColor: Color = .primaryText
     
     var body: some View {
         HStack(alignment: .center) {
             Text(title)
                 .font(AppTypography.callout)
-                .foregroundColor(.darkGreen.opacity(0.8))
+                .foregroundColor(Color.secondaryText)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
@@ -463,9 +456,9 @@ struct FinancialRowItem: View {
             Spacer(minLength: 8)
             
             Text(CurrencyFormatter.format(amount, currency: currency))
-                .font(isHighlighted ? AppTypography.title : AppTypography.callout)
+                .font(isHighlighted ? AppTypography.title3 : AppTypography.callout)
                 .fontWeight(isHighlighted ? .bold : .semibold)
-                .foregroundColor(amountColor)
+                .foregroundColor(amountColor == .primaryText ? Color.primaryText : amountColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .multilineTextAlignment(.trailing)
@@ -478,7 +471,7 @@ struct FinancialRowItem: View {
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isHighlighted ? Color.darkGreen.opacity(0.2) : Color.clear, lineWidth: 2)
+                .stroke(isHighlighted ? Color.primaryBackground.opacity(0.2) : Color.clear, lineWidth: 2)
         )
     }
 }
@@ -506,7 +499,7 @@ struct ActionButton: View {
                 
                 VStack(spacing: 2) {
                     Text(title)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .fontWeight(.medium)
                         .foregroundColor(foregroundColor)
                         .multilineTextAlignment(.center)
@@ -724,4 +717,4 @@ struct CustomProgressViewStyle: ProgressViewStyle {
 #Preview {
     DashboardScreen()
         .environmentObject(AppState())
-} 
+}

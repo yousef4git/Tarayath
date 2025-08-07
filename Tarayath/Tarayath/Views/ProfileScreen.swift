@@ -170,7 +170,7 @@ struct ProfileScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -394,4 +394,4 @@ struct EditProfileView: View {
 #Preview {
     ProfileScreen()
         .environmentObject(AppState())
-} 
+}

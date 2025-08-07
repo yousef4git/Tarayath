@@ -130,7 +130,7 @@ struct PurchaseDecisionScreen: View {
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title)
+                .font(AppTypography.title3)
                 .foregroundColor(.darkGreen)
             
             Spacer()
@@ -288,7 +288,7 @@ struct PurchaseDecisionCard: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.green)
                     Text(texts.purchased)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.green)
                         .fontWeight(.medium)
                 }
@@ -298,11 +298,11 @@ struct PurchaseDecisionCard: View {
             if let firstReason = decision.reasoning.values.first, !firstReason.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(texts.reasoning)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.secondary)
                         .fontWeight(.medium)
                     Text(firstReason)
-                        .font(AppTypography.caption)
+                        .font(AppTypography.caption1)
                         .foregroundColor(.darkGreen)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -313,7 +313,7 @@ struct PurchaseDecisionCard: View {
             HStack {
                 Spacer()
                 Text(decision.createdAt, style: .date)
-                    .font(AppTypography.caption)
+                    .font(AppTypography.caption1)
                     .foregroundColor(.secondary)
             }
         }
@@ -714,7 +714,7 @@ struct NewPurchaseDecisionView: View {
                     .font(.system(size: 48))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(decision.title)
-                        .font(AppTypography.title)
+                        .font(AppTypography.title3)
                         .foregroundColor(decision.color)
                         .fontWeight(.bold)
                     Text(decision.message)
@@ -747,7 +747,7 @@ struct NewPurchaseDecisionView: View {
                             .foregroundColor(.darkGreen)
                             .fontWeight(.medium)
                         Text(item.description)
-                            .font(AppTypography.caption)
+                            .font(AppTypography.caption1)
                             .foregroundColor(.secondary)
                     }
                     Spacer()
@@ -925,4 +925,4 @@ struct NewPurchaseDecisionView: View {
 #Preview {
     PurchaseDecisionScreen()
         .environmentObject(AppState())
-} 
+}
