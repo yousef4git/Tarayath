@@ -277,6 +277,7 @@ struct CollectInfoScreen: View {
                 }
             }
         }
+        
     }
     
     private var submitButton: some View {
