@@ -11,7 +11,7 @@ struct PurchaseDecisionScreen: View {
     private var texts: [AppLanguage: DecisionTexts] = [
         .english: DecisionTexts(
             title: "Decision Helper",
-            backToDashboard: "Back to Dashboard",
+            backToDashboard: "",
             makeNewDecision: "Get Decision Help",
             recentDecisions: "Recent Decisions",
             noDecisions: "No decisions made yet",
@@ -27,7 +27,7 @@ struct PurchaseDecisionScreen: View {
         ),
         .arabic: DecisionTexts(
             title: "مساعد القرارات",
-            backToDashboard: "العودة للوحة الرئيسية",
+            backToDashboard: "",
             makeNewDecision: "احصل على مساعدة القرار",
             recentDecisions: "القرارات الأخيرة",
             noDecisions: "لم يتم اتخاذ قرارات بعد",
@@ -65,7 +65,6 @@ struct PurchaseDecisionScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -78,7 +77,6 @@ struct PurchaseDecisionScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -99,7 +97,7 @@ struct PurchaseDecisionScreen: View {
                     }
                 }
             }
-        }
+        
         .sheet(isPresented: $showingNewDecisionSheet) {
             NewPurchaseDecisionView(
                 userData: userData,

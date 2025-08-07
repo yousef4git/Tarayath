@@ -11,7 +11,7 @@ struct SavingsPlanScreen: View {
     private var texts: [AppLanguage: SavingsTexts] = [
         .english: SavingsTexts(
             title: "Savings Plans",
-            backToDashboard: "Back to Dashboard",
+            backToDashboard: "",
             createNewPlan: "Create New Plan",
             activePlans: "Active Plans",
             completedPlans: "Completed Plans",
@@ -29,7 +29,7 @@ struct SavingsPlanScreen: View {
         ),
         .arabic: SavingsTexts(
             title: "خطط الادخار",
-            backToDashboard: "العودة للوحة الرئيسية",
+            backToDashboard: "",
             createNewPlan: "إنشاء خطة جديدة",
             activePlans: "الخطط النشطة",
             completedPlans: "الخطط المكتملة",
@@ -79,7 +79,6 @@ struct SavingsPlanScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -92,7 +91,6 @@ struct SavingsPlanScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -121,7 +119,7 @@ struct SavingsPlanScreen: View {
                     }
                 }
             }
-        }
+        
         .sheet(isPresented: $showingNewPlanSheet) {
             NewSavingsPlanView(
                 userData: userData,

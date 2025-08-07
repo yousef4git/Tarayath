@@ -18,7 +18,7 @@ struct SplashScreen: View {
             VStack(spacing: 40) {
                 Spacer()
                 
-                // App Logo
+               
                 VStack(spacing: 24) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 24)
@@ -26,10 +26,10 @@ struct SplashScreen: View {
                             .frame(width: 120, height: 120)
                             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
                         
-                        Image("Screenshot 1447-02-12 at 11.03.28 AM")
+                        Image("logo")
                                    .resizable()
                                    .scaledToFit() // 
-                                   .frame(width: 80, height: 80)
+                                   .frame(width: 500, height: 500)
                     }
                     .scaleEffect(showContent ? 1.0 : 0.8)
                     .animation(.spring(response: 0.8, dampingFraction: 0.6), value: showContent)

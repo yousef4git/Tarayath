@@ -89,7 +89,6 @@ struct DashboardScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background
                 LinearGradient(
@@ -102,7 +101,6 @@ struct DashboardScreen: View {
                 VStack(spacing: 0) {
                     // Header
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Content
                     ScrollView {
@@ -118,16 +116,14 @@ struct DashboardScreen: View {
                             budgetAllocationCard
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 40)
                     }
                 }
-                
-                // History Panel Overlay
-                if showHistory {
-                    historyPanelOverlay
-                }
+
             }
-        }
+            .sheet(isPresented: $showHistory) {
+                historyPanelOverlay
+            }
+        
         .environment(\.layoutDirection, userData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
@@ -361,20 +357,11 @@ struct DashboardScreen: View {
     }
     
     private var historyPanelOverlay: some View {
-        ZStack {
-            // Background overlay
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation {
-                        showHistory = false
-                    }
-                }
-            
+
             // History Panel
             HistoryPanel(isPresented: $showHistory)
                 .transition(.move(edge: userData.language.isRTL ? .leading : .trailing))
-        }
+        
     }
     
     enum BudgetCategory {

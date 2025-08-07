@@ -77,7 +77,6 @@ struct CollectInfoScreen: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 // Background Gradient
                 LinearGradient(
@@ -90,7 +89,6 @@ struct CollectInfoScreen: View {
                 VStack(spacing: 0) {
                     // Header with Language Toggle
                     headerView
-                        .padding(.top, geometry.safeAreaInsets.top)
                     
                     // Form Content
                     ScrollView {
@@ -110,11 +108,10 @@ struct CollectInfoScreen: View {
                             }
                         }
                         .padding(.horizontal, 24)
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 32)
                     }
                 }
             }
-        }
+        
         .environment(\.layoutDirection, formData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
@@ -159,7 +156,7 @@ struct CollectInfoScreen: View {
     }
     
     private var titleSection: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             // App Logo
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
@@ -167,9 +164,11 @@ struct CollectInfoScreen: View {
                     .frame(width: 80, height: 80)
                     .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 
-                Text("T")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.creamWhite)
+                
+                Image("logo")
+                           .resizable()
+                           .scaledToFit() //
+                           .frame(width: 250, height: 250)
             }
             
             VStack(spacing: 8) {
@@ -183,8 +182,10 @@ struct CollectInfoScreen: View {
                     .foregroundColor(.darkGreen.opacity(0.7))
                     .multilineTextAlignment(.center)
             }
+            
         }
-        .padding(.top, 32)
+        
+        
     }
     
     private var formSection: some View {
@@ -258,7 +259,7 @@ struct CollectInfoScreen: View {
             Text(t.currency)
                 .font(AppTypography.callout)
                 .foregroundColor(.darkGreen)
-            
+                
             HStack(spacing: 12) {
                 CurrencyButton(
                     title: "Saudi Riyal",
@@ -278,7 +279,7 @@ struct CollectInfoScreen: View {
             }
         }
         
-    }
+        .padding()}
     
     private var submitButton: some View {
         Button(action: handleSubmit) {
@@ -339,6 +340,7 @@ struct FormField: View {
                 Text(title)
                     .font(AppTypography.callout)
                     .foregroundColor(.darkGreen)
+                    .padding()
                 
                 if isRequired {
                     Text("*")
