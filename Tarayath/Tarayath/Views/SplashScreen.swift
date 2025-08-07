@@ -26,9 +26,10 @@ struct SplashScreen: View {
                             .frame(width: 120, height: 120)
                             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
                         
-                        Text("T")
-                            .font(.system(size: 48, weight: .bold, design: .default))
-                            .foregroundColor(.creamWhite)
+                        Image("Screenshot 1447-02-12 at 11.03.28 AM")
+                                   .resizable()
+                                   .scaledToFit() // 
+                                   .frame(width: 80, height: 80)
                     }
                     .scaleEffect(showContent ? 1.0 : 0.8)
                     .animation(.spring(response: 0.8, dampingFraction: 0.6), value: showContent)
