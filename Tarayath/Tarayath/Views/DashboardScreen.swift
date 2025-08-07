@@ -90,28 +90,38 @@ struct DashboardScreen: View {
     
     var body: some View {
         ZStack {
-            // Background - Updated
-            AppGradients.primaryGradient
-                .ignoresSafeArea()
+            // Enhanced Gradient Background
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.mediumGreen.opacity(0.7), location: 0.0),
+                    .init(color: Color.lightBrown.opacity(0.5), location: 0.3),
+                    .init(color: Color.creamWhite.opacity(0.8), location: 0.7),
+                    .init(color: Color.mediumGreen.opacity(0.3), location: 1.0)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
-                headerView
+                // Enhanced Header
+                enhancedHeaderView
                 
                 // Content
                 ScrollView {
-                    VStack(spacing: 28) {
-                        // Financial Overview
-                        financialOverviewCard
-                            .padding(.top, 16)
+                    VStack(spacing: 32) {
+                        // Financial Overview - Enhanced
+                        enhancedFinancialOverviewSection
+                            .padding(.top, 20)
                         
-                        // Action Buttons
-                        actionButtonsGrid
+                        // Action Buttons - Enhanced
+                        enhancedActionButtonsGrid
                         
-                        // Budget Allocation
-                        budgetAllocationCard
+                        // Budget Allocation - Enhanced
+                        enhancedBudgetAllocationSection
                     }
                     .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
             }
         }
@@ -122,172 +132,333 @@ struct DashboardScreen: View {
         .statusBarStyle(.lightContent)
     }
     
-    private var headerView: some View {
+    private var enhancedHeaderView: some View {
         VStack(spacing: 0) {
             HStack {
-                // History Button
+                // History Button - Enhanced
                 Button(action: { showHistory = true }) {
                     Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(Color.primaryText)
-                        .frame(width: 40, height: 40)
-                        .background(Color.primaryBackground.opacity(0.1))
-                        .cornerRadius(20)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 44, height: 44)
+                        .background(
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.creamWhite.opacity(0.9),
+                                            Color.lightBrown.opacity(0.4)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .shadow(color: Color.darkGreen.opacity(0.3), radius: 6, x: 0, y: 3)
                 }
                 
                 Spacer()
                 
-                // Title
-                VStack(spacing: 4) {
+                // Title - Enhanced
+                VStack(spacing: 6) {
                     Text(t.welcome(userData.fullName))
-                        .font(AppTypography.title2)
-                        .foregroundColor(Color.primaryText)
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                     
                     Text(t.subtitle)
-                        .font(AppTypography.callout)
-                        .foregroundColor(Color.secondaryText)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(Color.darkGreen.opacity(0.8))
                 }
                 
                 Spacer()
                 
-                // Profile Button
+                // Profile Button - Enhanced
                 Button(action: { appState.navigateToScreen(.profile) }) {
-                    Image(systemName: "person.circle")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(Color.primaryText)
-                        .frame(width: 40, height: 40)
-                        .background(Color.primaryBackground.opacity(0.1))
-                        .cornerRadius(20)
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 44, height: 44)
+                        .background(
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.creamWhite.opacity(0.9),
+                                            Color.lightBrown.opacity(0.4)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .shadow(color: Color.darkGreen.opacity(0.3), radius: 6, x: 0, y: 3)
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.vertical, 24)
+            .padding(.vertical, 20)
             
+            // Subtle divider
             Rectangle()
-                .fill(Color.primaryBackground.opacity(0.1))
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.clear,
+                            Color.mediumGreen.opacity(0.3),
+                            Color.clear
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
                 .frame(height: 1)
         }
-        .background(Color.cardBackground.opacity(0.95))
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.creamWhite.opacity(0.8),
+                    Color.lightBrown.opacity(0.2)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
     
-    private var financialOverviewCard: some View {
-        VStack(spacing: 24) {
+    private var enhancedFinancialOverviewSection: some View {
+        VStack(spacing: 28) {
+            // Header with Icon
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text("Financial Overview")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
+            
             // Top Grid - Income and Balance
             HStack(spacing: 16) {
-                FinancialStatCard(
+                EnhancedFinancialStatCard(
                     title: t.monthlyIncome,
                     amount: userData.monthlyIncome,
                     currency: userData.currency,
-                    color: .darkGreen
+                    icon: "dollarsign.circle.fill",
+                    gradientColors: [Color.darkGreen, Color.mediumGreen]
                 )
                 
-                FinancialStatCard(
+                EnhancedFinancialStatCard(
                     title: t.currentBalance,
                     amount: userData.currentBalance,
                     currency: userData.currency,
-                    color: .mediumGreen
+                    icon: "creditcard.fill",
+                    gradientColors: [Color.mediumGreen, Color.lightBrown]
                 )
             }
-            .frame(minHeight: 100)
             
             // Financial Breakdown
             VStack(spacing: 16) {
-                FinancialRowItem(
+                EnhancedFinancialRowItem(
                     title: t.monthlyObligations,
                     amount: userData.monthlyObligations,
                     currency: userData.currency,
-                    backgroundColor: Color.primaryBackground.opacity(0.05)
+                    icon: "list.bullet.circle.fill",
+                    gradientColors: [Color.lightBrown.opacity(0.8), Color.creamWhite]
                 )
                 
-                FinancialRowItem(
+                EnhancedFinancialRowItem(
                     title: t.totalSaved,
                     amount: totalPlannedSavings,
                     currency: userData.currency,
-                    backgroundColor: Color.lightBrown.opacity(0.1)
+                    icon: "star.circle.fill",
+                    gradientColors: [Color.mediumGreen.opacity(0.7), Color.lightBrown.opacity(0.5)]
                 )
                 
-                FinancialRowItem(
+                EnhancedFinancialRowItem(
                     title: t.netAvailable,
                     amount: netAvailable,
                     currency: userData.currency,
-                    backgroundColor: Color.darkGreen.opacity(0.05),
+                    icon: "banknote.fill",
                     isHighlighted: true,
-                    amountColor: netAvailable >= 0 ? .mediumGreen : .red
+                    amountColor: netAvailable >= 0 ? .mediumGreen : .red,
+                    gradientColors: [Color.creamWhite.opacity(0.9), Color.mediumGreen.opacity(0.3)]
                 )
             }
             
             // Active Plans Summary
             if !activeSavingsPlans.isEmpty {
-                activePlansSection
+                enhancedActivePlansSection
             }
         }
-        .padding(28)
-        .frame(maxWidth: .infinity)
-        .appCardStyle()
+        .padding(.horizontal, 6)
     }
     
-    private var activePlansSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+    private var enhancedActivePlansSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
+                Image(systemName: "target")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color.darkGreen)
+                
                 Text("\(t.activePlans) (\(activeSavingsPlans.count))")
-                    .font(AppTypography.caption1)
-                    .foregroundColor(.darkGreen.opacity(0.6))
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color.darkGreen)
+                
                 Spacer()
             }
             
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 ForEach(activeSavingsPlans.prefix(2)) { plan in
                     HStack {
+                        Circle()
+                            .fill(Color.mediumGreen)
+                            .frame(width: 8, height: 8)
+                        
                         Text(plan.goal)
-                            .font(AppTypography.caption1)
-                            .foregroundColor(.darkGreen.opacity(0.7))
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(Color.darkGreen)
                         
                         Spacer()
                         
                         Text("\(CurrencyFormatter.format(plan.monthlyAmount, currency: userData.currency))/month")
-                            .font(AppTypography.caption1)
-                            .foregroundColor(.darkGreen)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color.mediumGreen)
                     }
+                    .padding(.horizontal, 4)
                 }
                 
                 if activeSavingsPlans.count > 2 {
                     HStack {
+                        Circle()
+                            .fill(Color.lightBrown)
+                            .frame(width: 6, height: 6)
+                        
                         Text("+\(activeSavingsPlans.count - 2) more plans")
-                            .font(AppTypography.caption2)
-                            .foregroundColor(.darkGreen.opacity(0.5))
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color.darkGreen.opacity(0.7))
+                        
                         Spacer()
                     }
+                    .padding(.horizontal, 4)
                 }
             }
         }
-        .padding(.top, 8)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.creamWhite.opacity(0.6),
+                            Color.lightBrown.opacity(0.3)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.mediumGreen.opacity(0.4), Color.lightBrown.opacity(0.6)]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .shadow(color: Color.darkGreen.opacity(0.2), radius: 8, x: 0, y: 4)
     }
     
-    private var actionButtonsGrid: some View {
-        HStack(spacing: 12) {
-            // Start Savings Plan
-            ActionButton(
-                title: t.startSavingPlan,
-                icon: "star.fill",
-                style: .primary
-            ) {
-                appState.navigateToScreen(.savingsPlan)
+    private var enhancedActionButtonsGrid: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Image(systemName: "lightbulb.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text("Quick Actions")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
             }
+            .padding(.bottom, 4)
             
-            // Decision Helper
-            ActionButton(
-                title: t.decisionHelper,
-                icon: "checkmark.circle.fill",
-                style: .secondary
-            ) {
-                appState.navigateToScreen(.purchaseDecision)
+            HStack(spacing: 16) {
+                // Start Savings Plan
+                EnhancedActionButton(
+                    title: t.startSavingPlan,
+                    icon: "star.fill",
+                    gradientColors: [Color.mediumGreen, Color.darkGreen],
+                    style: .primary
+                ) {
+                    appState.navigateToScreen(.savingsPlan)
+                }
+                
+                // Decision Helper
+                EnhancedActionButton(
+                    title: t.decisionHelper,
+                    icon: "checkmark.circle.fill",
+                    gradientColors: [Color.lightBrown, Color.mediumGreen.opacity(0.8)],
+                    style: .secondary
+                ) {
+                    appState.navigateToScreen(.purchaseDecision)
+                }
             }
             
             // Recommendations (Disabled)
-            ActionButton(
+            EnhancedActionButton(
                 title: t.recommendations,
                 subtitle: t.soonFeature,
                 icon: "arrow.right.circle.fill",
+                gradientColors: [Color.lightBrown.opacity(0.3), Color.creamWhite.opacity(0.6)],
                 style: .disabled
             ) {
                 // Coming soon
@@ -295,20 +466,42 @@ struct DashboardScreen: View {
         }
     }
     
-    private var budgetAllocationCard: some View {
+    private var enhancedBudgetAllocationSection: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(t.budgetAllocation)
-                .font(AppTypography.title3)
-                .foregroundColor(.darkGreen)
+            HStack {
+                Image(systemName: "chart.pie.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text(t.budgetAllocation)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
             
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
                 // Needs
-                BudgetCategoryRow(
+                EnhancedBudgetCategoryRow(
                     title: t.needs,
                     percentage: appState.budgetBuckets.needs,
                     amount: (userData.monthlyIncome * Double(appState.budgetBuckets.needs)) / 100,
                     currency: userData.currency,
-                    color: .darkGreen
+                    color: .darkGreen,
+                    icon: "house.fill"
                 ) { newPercentage in
                     updateBudgetCategory(.needs, newPercentage: newPercentage)
                 } onAmountChange: { newAmount in
@@ -316,12 +509,13 @@ struct DashboardScreen: View {
                 }
                 
                 // Wants
-                BudgetCategoryRow(
+                EnhancedBudgetCategoryRow(
                     title: t.wants,
                     percentage: appState.budgetBuckets.wants,
                     amount: (userData.monthlyIncome * Double(appState.budgetBuckets.wants)) / 100,
                     currency: userData.currency,
-                    color: .lightBrown
+                    color: .lightBrown,
+                    icon: "gift.fill"
                 ) { newPercentage in
                     updateBudgetCategory(.wants, newPercentage: newPercentage)
                 } onAmountChange: { newAmount in
@@ -329,12 +523,13 @@ struct DashboardScreen: View {
                 }
                 
                 // Savings
-                BudgetCategoryRow(
+                EnhancedBudgetCategoryRow(
                     title: t.savings,
                     percentage: appState.budgetBuckets.savings,
                     amount: (userData.monthlyIncome * Double(appState.budgetBuckets.savings)) / 100,
                     currency: userData.currency,
-                    color: .mediumGreen
+                    color: .mediumGreen,
+                    icon: "banknote.fill"
                 ) { newPercentage in
                     updateBudgetCategory(.savings, newPercentage: newPercentage)
                 } onAmountChange: { newAmount in
@@ -342,19 +537,12 @@ struct DashboardScreen: View {
                 }
             }
         }
-        .padding(28)
-        .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .padding(.horizontal, 6)
     }
     
     private var historyPanelOverlay: some View {
-
-            // History Panel
-            HistoryPanel(isPresented: $showHistory)
-                .transition(.move(edge: userData.language.isRTL ? .leading : .trailing))
-        
+        HistoryPanel(isPresented: $showHistory)
+            .transition(.move(edge: userData.language.isRTL ? .leading : .trailing))
     }
     
     enum BudgetCategory {
@@ -402,84 +590,156 @@ struct DashboardScreen: View {
     }
 }
 
-// MARK: - Supporting Views
+// MARK: - Enhanced Supporting Views
 
-struct FinancialStatCard: View {
+struct EnhancedFinancialStatCard: View {
     let title: String
     let amount: Double
     let currency: Currency
-    let color: Color
+    let icon: String
+    let gradientColors: [Color]
     
     var body: some View {
-        VStack(spacing: 12) {
-            Text(title)
-                .font(AppTypography.callout)
-                .foregroundColor(Color.secondaryText)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+        VStack(spacing: 16) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: gradientColors),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Spacer()
+            }
             
-            Spacer(minLength: 8)
-            
-            Text(CurrencyFormatter.format(amount, currency: currency))
-                .font(AppTypography.title2)
-                .fontWeight(.bold)
-                .foregroundColor(Color.primaryText)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(spacing: 8) {
+                Text(title)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color.darkGreen.opacity(0.8))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                
+                Text(CurrencyFormatter.format(amount, currency: currency))
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: gradientColors),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 90)
-        .padding(.vertical, 16)
-        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity, minHeight: 120)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.creamWhite.opacity(0.8),
+                            Color.lightBrown.opacity(0.3)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: gradientColors.map { $0.opacity(0.4) }),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 2
+                )
+        )
+        .shadow(color: gradientColors.first?.opacity(0.3) ?? Color.clear, radius: 8, x: 0, y: 4)
     }
 }
 
-struct FinancialRowItem: View {
+struct EnhancedFinancialRowItem: View {
     let title: String
     let amount: Double
     let currency: Currency
-    let backgroundColor: Color
+    let icon: String
     var isHighlighted: Bool = false
     var amountColor: Color = .primaryText
+    let gradientColors: [Color]
     
     var body: some View {
-        HStack(alignment: .center) {
-            Text(title)
-                .font(AppTypography.callout)
-                .foregroundColor(Color.secondaryText)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
+        HStack(alignment: .center, spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundColor(Color.darkGreen)
+                .frame(width: 24)
             
-            Spacer(minLength: 8)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(Color.darkGreen)
+                    .lineLimit(1)
+                
+                if isHighlighted {
+                    Text(amount >= 0 ? "Available" : "Deficit")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(amount >= 0 ? Color.mediumGreen : Color.red)
+                }
+            }
+            
+            Spacer()
             
             Text(CurrencyFormatter.format(amount, currency: currency))
-                .font(isHighlighted ? AppTypography.title3 : AppTypography.callout)
-                .fontWeight(isHighlighted ? .bold : .semibold)
-                .foregroundColor(amountColor == .primaryText ? Color.primaryText : amountColor)
+                .font(.system(size: isHighlighted ? 18 : 16, weight: .bold, design: .rounded))
+                .foregroundColor(amountColor == .primaryText ? Color.darkGreen : amountColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
-                .multilineTextAlignment(.trailing)
-                .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(minHeight: 60)
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(backgroundColor)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isHighlighted ? Color.primaryBackground.opacity(0.2) : Color.clear, lineWidth: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: gradientColors),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    isHighlighted 
+                        ? LinearGradient(
+                            gradient: Gradient(colors: [Color.mediumGreen.opacity(0.6), Color.darkGreen.opacity(0.4)]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        : LinearGradient(
+                            gradient: Gradient(colors: [Color.clear]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                    lineWidth: isHighlighted ? 2 : 0
+                )
+        )
+        .shadow(color: Color.darkGreen.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }
 
-struct ActionButton: View {
+struct EnhancedActionButton: View {
     let title: String
     var subtitle: String? = nil
     let icon: String
+    let gradientColors: [Color]
     let style: ButtonStyleType
     let action: () -> Void
     
@@ -489,68 +749,101 @@ struct ActionButton: View {
     
     var body: some View {
         Button(action: style == .disabled ? {} : action) {
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(foregroundColor)
-                    .frame(width: 40, height: 40)
-                    .background(iconBackgroundColor)
-                    .cornerRadius(12)
+                    .frame(width: 50, height: 50)
+                    .background(
+                        Circle()
+                            .fill(iconBackgroundGradient)
+                    )
+                    .shadow(color: shadowColor, radius: 6, x: 0, y: 3)
                 
-                VStack(spacing: 2) {
+                VStack(spacing: 4) {
                     Text(title)
-                        .font(AppTypography.caption1)
-                        .fontWeight(.medium)
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(foregroundColor)
                         .multilineTextAlignment(.center)
+                        .lineLimit(2)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
-                            .font(.system(size: 11, weight: .regular))
-                            .foregroundColor(foregroundColor.opacity(0.6))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(foregroundColor.opacity(0.7))
                             .multilineTextAlignment(.center)
                     }
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(16)
-            .background(backgroundColor)
-            .cornerRadius(16)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(backgroundGradient)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(borderGradient, lineWidth: style == .disabled ? 1 : 0)
+            )
+            .shadow(color: shadowColor, radius: style == .disabled ? 2 : 8, x: 0, y: style == .disabled ? 1 : 4)
         }
         .disabled(style == .disabled)
+        .scaleEffect(style == .disabled ? 0.95 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: style)
     }
     
-    private var backgroundColor: Color {
-        switch style {
-        case .primary: return Color.mediumGreen
-        case .secondary: return Color.lightBrown
-        case .disabled: return Color.darkGreen.opacity(0.05)
-        }
+    private var backgroundGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: style == .disabled ? [Color.lightBrown.opacity(0.2), Color.creamWhite.opacity(0.5)] : gradientColors),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    private var iconBackgroundGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                foregroundColor.opacity(0.2),
+                foregroundColor.opacity(0.1)
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    private var borderGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [Color.mediumGreen.opacity(0.3), Color.lightBrown.opacity(0.3)]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
     
     private var foregroundColor: Color {
         switch style {
         case .primary: return Color.creamWhite
         case .secondary: return Color.darkGreen
-        case .disabled: return Color.darkGreen.opacity(0.4)
+        case .disabled: return Color.darkGreen.opacity(0.5)
         }
     }
     
-    private var iconBackgroundColor: Color {
+    private var shadowColor: Color {
         switch style {
-        case .primary: return Color.creamWhite.opacity(0.2)
-        case .secondary: return Color.darkGreen.opacity(0.1)
-        case .disabled: return Color.darkGreen.opacity(0.05)
+        case .primary: return gradientColors.first?.opacity(0.4) ?? Color.clear
+        case .secondary: return gradientColors.first?.opacity(0.3) ?? Color.clear
+        case .disabled: return Color.darkGreen.opacity(0.1)
         }
     }
 }
 
-struct BudgetCategoryRow: View {
+struct EnhancedBudgetCategoryRow: View {
     let title: String
     let percentage: Int
     let amount: Double
     let currency: Currency
     let color: Color
+    let icon: String
     let onPercentageChange: (Int) -> Void
     let onAmountChange: (Double) -> Void
     
@@ -560,28 +853,49 @@ struct BudgetCategoryRow: View {
     var body: some View {
         VStack(spacing: 20) {
             // Title and Amount Input
-            HStack(alignment: .center) {
-                Text(title)
-                    .font(AppTypography.callout)
-                    .foregroundColor(.darkGreen.opacity(0.8))
-                    .lineLimit(1)
-                    .fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .center, spacing: 16) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(color)
+                    .frame(width: 28)
                 
-                Spacer(minLength: 12)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(Color.darkGreen)
+                    
+                    Text("\(percentage)% of income")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(color.opacity(0.8))
+                }
                 
-                HStack(spacing: 10) {
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
                     TextField("", text: $tempAmount)
                         .textFieldStyle(PlainTextFieldStyle())
-                        .font(AppTypography.callout)
-                        .foregroundColor(.darkGreen)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Color.darkGreen)
+                        .multilineTextAlignment(.trailing)
                         .frame(width: 100)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(Color.white)
-                        .cornerRadius(10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.creamWhite.opacity(0.9),
+                                            Color.lightBrown.opacity(0.3)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.mediumGreen.opacity(0.4), lineWidth: 1.5)
+                                .stroke(color.opacity(0.4), lineWidth: 1.5)
                         )
                         .keyboardType(.decimalPad)
                         .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { _ in
@@ -593,18 +907,11 @@ struct BudgetCategoryRow: View {
                             }
                             isEditingAmount = false
                         }
-                    
-                    Text("(\(percentage)%)")
-                        .font(AppTypography.callout)
-                        .foregroundColor(.darkGreen.opacity(0.6))
-                        .fontWeight(.medium)
-                        .fixedSize(horizontal: true, vertical: false)
                 }
             }
-            .frame(minHeight: 50)
             
-            // Interactive Slider
-            CustomSlider(
+            // Enhanced Slider
+            EnhancedCustomSlider(
                 value: Double(percentage),
                 in: 0...100,
                 step: 1,
@@ -612,14 +919,42 @@ struct BudgetCategoryRow: View {
             ) { newValue in
                 onPercentageChange(Int(newValue))
             }
-            .frame(height: 24)
+            .frame(height: 32)
             
-            // Progress Bar
-            ProgressView(value: Double(percentage), total: 100)
-                .progressViewStyle(CustomProgressViewStyle(color: color))
-                .frame(height: 10)
+            // Enhanced Progress Bar
+            EnhancedProgressBar(
+                value: Double(percentage),
+                total: 100,
+                color: color
+            )
+            .frame(height: 12)
         }
-        .padding(.vertical, 8)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.creamWhite.opacity(0.7),
+                            color.opacity(0.1)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [color.opacity(0.4), color.opacity(0.2)]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .shadow(color: color.opacity(0.2), radius: 6, x: 0, y: 3)
         .onAppear {
             tempAmount = String(format: "%.0f", amount)
         }
@@ -631,7 +966,7 @@ struct BudgetCategoryRow: View {
     }
 }
 
-struct CustomSlider: View {
+struct EnhancedCustomSlider: View {
     let value: Double
     let range: ClosedRange<Double>
     let step: Double
@@ -650,23 +985,46 @@ struct CustomSlider: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // Track
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(height: 8)
-                    .cornerRadius(4)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.lightBrown.opacity(0.3),
+                                Color.creamWhite.opacity(0.6)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 16)
                 
                 // Progress
-                Rectangle()
-                    .fill(color)
-                    .frame(width: progressWidth(geometry: geometry), height: 8)
-                    .cornerRadius(4)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [color, color.opacity(0.7)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: progressWidth(geometry: geometry), height: 16)
                 
                 // Thumb
                 Circle()
-                    .fill(color)
-                    .frame(width: 20, height: 20)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.creamWhite, color.opacity(0.3)]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 26, height: 26)
+                    .overlay(
+                        Circle()
+                            .stroke(color, lineWidth: 3)
+                    )
+                    .shadow(color: color.opacity(0.4), radius: 4, x: 0, y: 2)
                     .offset(x: thumbOffset(geometry: geometry))
-                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
             }
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -679,7 +1037,7 @@ struct CustomSlider: View {
                     }
             )
         }
-        .frame(height: 20)
+        .frame(height: 26)
     }
     
     private func progressWidth(geometry: GeometryProxy) -> CGFloat {
@@ -689,25 +1047,41 @@ struct CustomSlider: View {
     
     private func thumbOffset(geometry: GeometryProxy) -> CGFloat {
         let percent = (value - range.lowerBound) / (range.upperBound - range.lowerBound)
-        return (geometry.size.width - 20) * CGFloat(percent)
+        return (geometry.size.width - 26) * CGFloat(percent)
     }
 }
 
-struct CustomProgressViewStyle: ProgressViewStyle {
+struct EnhancedProgressBar: View {
+    let value: Double
+    let total: Double
     let color: Color
     
-    func makeBody(configuration: Configuration) -> some View {
+    var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.lightBrown.opacity(0.2),
+                                Color.creamWhite.opacity(0.4)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .frame(height: 12)
-                    .cornerRadius(6)
                 
-                Rectangle()
-                    .fill(color)
-                    .frame(width: geometry.size.width * CGFloat(configuration.fractionCompleted ?? 0), height: 12)
-                    .cornerRadius(6)
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [color, color.opacity(0.7)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: geometry.size.width * CGFloat(value / total), height: 12)
+                    .shadow(color: color.opacity(0.3), radius: 2, x: 0, y: 1)
             }
         }
         .frame(height: 12)

@@ -101,40 +101,45 @@ struct ProfileScreen: View {
     }
     
     var body: some View {
-            ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.mediumGreen.opacity(0.05)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+        ZStack {
+            // Enhanced Gradient Background
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.mediumGreen.opacity(0.6), location: 0.0),
+                    .init(color: Color.lightBrown.opacity(0.4), location: 0.3),
+                    .init(color: Color.creamWhite.opacity(0.7), location: 0.7),
+                    .init(color: Color.mediumGreen.opacity(0.2), location: 1.0)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Enhanced Header
+                enhancedHeaderView
                 
-                VStack(spacing: 0) {
-                    // Header
-                    headerView
-                    
-                    // Content
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            // Personal Information Section
-                            personalInfoSection
-                            
-                            
-                            // Financial Summary Section
-                            financialSummarySection
-                            
-                            // App Settings Section
-                            appSettingsSection
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                        .padding(.bottom, 40)
+                // Content
+                ScrollView {
+                    VStack(spacing: 32) {
+                        // Profile Avatar Section
+                        profileAvatarSection
+                            .padding(.top, 20)
                         
+                        // Personal Information Section - Enhanced
+                        enhancedPersonalInfoSection
+                        
+                        // Financial Summary Section - Enhanced
+                        enhancedFinancialSummarySection
+                        
+                        // App Settings Section - Enhanced
+                        enhancedAppSettingsSection
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
             }
-        
+        }
         .confirmationDialog(t.resetConfirmation, isPresented: $showingResetConfirmation) {
             Button(t.reset, role: .destructive) {
                 appState.resetApp()
@@ -151,142 +156,484 @@ struct ProfileScreen: View {
                 showingEditProfile = false
             }
         }
+        .environment(\.layoutDirection, userData.language.isRTL ? .rightToLeft : .leftToRight)
     }
     
-    private var headerView: some View {
+    private var enhancedHeaderView: some View {
         HStack {
             Button(action: {
                 appState.navigateToScreen(.dashboard)
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: 16, weight: .semibold))
                     Text(t.backToDashboard)
-                        .font(AppTypography.callout)
+                        .font(.system(size: 16, weight: .medium))
                 }
-                .foregroundColor(.darkGreen)
+                .foregroundStyle(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.creamWhite.opacity(0.8),
+                                    Color.lightBrown.opacity(0.3)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .shadow(color: Color.darkGreen.opacity(0.2), radius: 4, x: 0, y: 2)
             }
             
             Spacer()
             
             Text(t.title)
-                .font(AppTypography.title3)
-                .foregroundColor(.darkGreen)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
             
             Spacer()
             
-            // Invisible button for balance
-            Button(action: {}) {
-                HStack(spacing: 8) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .medium))
-                    Text(t.backToDashboard)
-                        .font(AppTypography.callout)
-                }
-                .foregroundColor(.clear)
-            }
+            // Invisible spacer for balance
+            Color.clear
+                .frame(width: 80, height: 40)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Color.white.opacity(0.9))
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.creamWhite.opacity(0.8),
+                    Color.lightBrown.opacity(0.2)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
     
-    private var personalInfoSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(t.personalInfo)
-                .font(AppTypography.title3)
-                .foregroundColor(.darkGreen)
-                .padding(.bottom,8)
-                .padding()
-            VStack(spacing: 12) {
-                InfoRow(label: t.fullName, value: userData.fullName.isEmpty ? "N/A" : userData.fullName)
-                InfoRow(label: t.monthlyIncome, value: CurrencyFormatter.format(userData.monthlyIncome, currency: userData.currency))
-                InfoRow(label: t.monthlyObligations, value: CurrencyFormatter.format(userData.monthlyObligations, currency: userData.currency))
-                InfoRow(label: t.currentBalance, value: CurrencyFormatter.format(userData.currentBalance, currency: userData.currency))
-                InfoRow(label: t.currency, value: userData.currency.symbol)
-                InfoRow(label: t.language, value: userData.language == .english ? t.english : t.arabic)
+    private var profileAvatarSection: some View {
+        VStack(spacing: 20) {
+            // Profile Avatar
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.mediumGreen,
+                                Color.darkGreen
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+                    .shadow(color: Color.darkGreen.opacity(0.4), radius: 12, x: 0, y: 6)
+                
+                Text(userData.fullName.prefix(2).uppercased())
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundColor(Color.creamWhite)
+            }
+            
+            // User Name
+            VStack(spacing: 8) {
+                Text(userData.fullName.isEmpty ? "User" : userData.fullName)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                HStack(spacing: 8) {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color.mediumGreen)
+                    
+                    Text(userData.currency == .SAR ? "Saudi Arabia" : "International")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(Color.darkGreen.opacity(0.8))
+                }
+            }
+        }
+    }
+    
+    private var enhancedPersonalInfoSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "person.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text(t.personalInfo)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
+            
+            VStack(spacing: 16) {
+                EnhancedInfoRow(
+                    icon: "person.fill",
+                    label: t.fullName,
+                    value: userData.fullName.isEmpty ? "N/A" : userData.fullName,
+                    gradientColors: [Color.lightBrown.opacity(0.6), Color.creamWhite.opacity(0.8)]
+                )
+                
+                EnhancedInfoRow(
+                    icon: "dollarsign.circle.fill",
+                    label: t.monthlyIncome,
+                    value: CurrencyFormatter.format(userData.monthlyIncome, currency: userData.currency),
+                    gradientColors: [Color.mediumGreen.opacity(0.5), Color.lightBrown.opacity(0.4)]
+                )
+                
+                EnhancedInfoRow(
+                    icon: "list.bullet.circle.fill",
+                    label: t.monthlyObligations,
+                    value: CurrencyFormatter.format(userData.monthlyObligations, currency: userData.currency),
+                    gradientColors: [Color.darkGreen.opacity(0.4), Color.mediumGreen.opacity(0.3)]
+                )
+                
+                EnhancedInfoRow(
+                    icon: "creditcard.fill",
+                    label: t.currentBalance,
+                    value: CurrencyFormatter.format(userData.currentBalance, currency: userData.currency),
+                    gradientColors: [Color.creamWhite.opacity(0.7), Color.lightBrown.opacity(0.5)]
+                )
+                
+                EnhancedInfoRow(
+                    icon: "coloncurrencysign.circle.fill",
+                    label: t.currency,
+                    value: userData.currency.symbol,
+                    gradientColors: [Color.mediumGreen.opacity(0.4), Color.creamWhite.opacity(0.6)]
+                )
+                
+                EnhancedInfoRow(
+                    icon: "globe",
+                    label: t.language,
+                    value: userData.language == .english ? t.english : t.arabic,
+                    gradientColors: [Color.lightBrown.opacity(0.5), Color.mediumGreen.opacity(0.3)]
+                )
             }
             
             Button(action: {
                 showingEditProfile = true
             }) {
-                Text(t.editProfile)
-                    .font(AppTypography.button)
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 12) {
+                    Image(systemName: "pencil.circle.fill")
+                        .font(.system(size: 20))
+                    Text(t.editProfile)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+                .foregroundColor(Color.creamWhite)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.mediumGreen, Color.darkGreen]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(16)
+                .shadow(color: Color.darkGreen.opacity(0.4), radius: 8, x: 0, y: 4)
             }
-            .buttonStyle(PrimaryButtonStyle())
             .padding(.top, 8)
         }
-        .modifier(AppCardStyle())
+        .padding(.horizontal, 6)
     }
     
-    private var financialSummarySection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(t.financialSummary)
-                .font(AppTypography.title3)
-                .foregroundColor(.darkGreen)
-                .padding(.bottom, 8)
-                .padding()
+    private var enhancedFinancialSummarySection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "chart.bar.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text(t.financialSummary)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
             
-            VStack(spacing: 12) {
-                InfoRow(label: t.totalSavingsPlans, value: "\(appState.savingsPlans.count)")
-                InfoRow(label: t.activePlans, value: "\(activeSavingsPlans)")
-                InfoRow(label: t.completedPlans, value: "\(completedSavingsPlans)")
-                InfoRow(label: t.totalDecisions, value: "\(appState.purchaseDecisions.count)")
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                EnhancedStatCard(
+                    icon: "star.circle.fill",
+                    title: t.totalSavingsPlans,
+                    value: "\(appState.savingsPlans.count)",
+                    gradientColors: [Color.mediumGreen, Color.lightBrown]
+                )
+                
+                EnhancedStatCard(
+                    icon: "checkmark.circle.fill",
+                    title: t.activePlans,
+                    value: "\(activeSavingsPlans)",
+                    gradientColors: [Color.darkGreen, Color.mediumGreen]
+                )
+                
+                EnhancedStatCard(
+                    icon: "trophy.circle.fill",
+                    title: t.completedPlans,
+                    value: "\(completedSavingsPlans)",
+                    gradientColors: [Color.lightBrown, Color.creamWhite.opacity(0.8)]
+                )
+                
+                EnhancedStatCard(
+                    icon: "brain.head.profile",
+                    title: t.totalDecisions,
+                    value: "\(appState.purchaseDecisions.count)",
+                    gradientColors: [Color.mediumGreen.opacity(0.8), Color.darkGreen.opacity(0.6)]
+                )
             }
         }
-        .modifier(AppCardStyle())
+        .padding(.horizontal, 6)
     }
     
-    private var appSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(t.appSettings)
-                .font(AppTypography.title3)
-                .foregroundColor(.darkGreen)
-                .padding(.bottom, 8)
-                .padding()
+    private var enhancedAppSettingsSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                Text(t.appSettings)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.darkGreen, Color.mediumGreen]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
             
             Button(action: {
                 showingResetConfirmation = true
             }) {
-                HStack {
-                    Image(systemName: "trash")
-                        .font(.system(size: 16, weight: .medium))
-                    Text(t.resetData)
-                        .font(AppTypography.button)
+                HStack(spacing: 16) {
+                    Image(systemName: "trash.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.red)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(t.resetData)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.red)
+                        
+                        Text("This will delete all your data")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.red.opacity(0.8))
+                    }
+                    
                     Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.red.opacity(0.6))
                 }
-                .foregroundColor(.red)
-                .padding(.vertical, 16)
                 .padding(.horizontal, 20)
-                .background(Color.red.opacity(0.1))
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                .padding(.vertical, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.red.opacity(0.1),
+                                    Color.red.opacity(0.05)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.red.opacity(0.3), Color.red.opacity(0.1)]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .shadow(color: Color.red.opacity(0.2), radius: 4, x: 0, y: 2)
             }
         }
-        .modifier(AppCardStyle())
+        .padding(.horizontal, 6)
     }
 }
 
-struct InfoRow: View {
+// MARK: - Enhanced Supporting Views
+
+struct EnhancedInfoRow: View {
+    let icon: String
     let label: String
     let value: String
+    let gradientColors: [Color]
     
     var body: some View {
-        HStack {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundColor(Color.darkGreen)
+                .frame(width: 24)
+            
             Text(label)
-                .font(AppTypography.callout)
-                .foregroundColor(.secondary)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(Color.darkGreen.opacity(0.8))
+            
             Spacer()
+            
             Text(value)
-                .font(AppTypography.callout)
-                .foregroundColor(.darkGreen)
-                .fontWeight(.medium)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(Color.darkGreen)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: gradientColors),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.mediumGreen.opacity(0.3), Color.lightBrown.opacity(0.2)]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.darkGreen.opacity(0.1), radius: 3, x: 0, y: 2)
+    }
+}
+
+struct EnhancedStatCard: View {
+    let icon: String
+    let title: String
+    let value: String
+    let gradientColors: [Color]
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 28))
+                .foregroundStyle(
+                    LinearGradient(
+                        gradient: Gradient(colors: gradientColors),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            
+            VStack(spacing: 6) {
+                Text(value)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: gradientColors),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Text(title)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(Color.darkGreen.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 120)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.creamWhite.opacity(0.7),
+                            gradientColors.first?.opacity(0.2) ?? Color.lightBrown.opacity(0.2)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: gradientColors.map { $0.opacity(0.4) }),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .shadow(color: gradientColors.first?.opacity(0.2) ?? Color.clear, radius: 6, x: 0, y: 3)
     }
 }
 

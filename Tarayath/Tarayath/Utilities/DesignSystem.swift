@@ -430,6 +430,26 @@ struct LocalizedText {
     }
 }
 
+// MARK: - Common UI Components
+
+struct InfoRow: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(Color.darkGreen.opacity(0.8))
+            Spacer()
+            Text(value)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(Color.darkGreen)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 // MARK: - Animation Presets
 struct AppAnimations {
     static let gentle = Animation.easeInOut(duration: 0.3)
